@@ -2,12 +2,16 @@
 #include<stdio.h>
 #include "parser.tab.h"
 int yylineno = 1;
+void yyerror (char *s);
+int yylex();
 %}
 
 %%
         /* Identifier and Numbers */
 [a-zA-Z_][a-zA-Z0-9_]*          return IDENTIFIER;
 [0-9]+                          return NUMBER;
+"true"                          return TRUE_VAL;
+"false"                         return FALSE_VAL;
 
         /* Constant */
 "const"                         return CONST;
@@ -50,7 +54,7 @@ int yylineno = 1;
 
         /* if then else statement */
 "if"                            return IF;
-"then"                          return THEN;
+"else if"                       return ELSEIF;
 "else"                          return ELSE;
 
         /* While & do-while statement */
@@ -90,3 +94,9 @@ int yywrap(void)
 {
    return 0;
 }
+
+/* This is called by our parser whenever there is a syntactical error. In other words something that does not suit the grammar. */
+void yyerror (char *s) {
+    fprintf(stderr, "\n ERROR LINE %d :\n %s \n", yylineno, s);
+    exit(0);
+} 
