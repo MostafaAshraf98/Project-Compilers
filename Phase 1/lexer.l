@@ -7,11 +7,6 @@ int yylex();
 %}
 
 %%
-        /* Identifier and Numbers */
-[a-zA-Z_][a-zA-Z0-9_]*          return IDENTIFIER;
-[0-9]+                          return NUMBER;
-"true"                          return TRUE_VAL;
-"false"                         return FALSE_VAL;
 
         /* Constant */
 "const"                         return CONST;
@@ -29,8 +24,8 @@ int yylex();
 "--"                            return DEC;
    
         /* Comparison Op */
-"<"				                return LT;
-">"				                return GT;
+"<"				return LT;
+">"				return GT;
 ">="                            return GE;
 "<="                            return LE;
 "=="                            return EQ_EQ;
@@ -42,7 +37,7 @@ int yylex();
 "!"                             return NOT;
 
         /* Assignment Operator */
-"="				                return EQUAL;
+"="				return EQUAL;
 
         /* Types */
 "int"                           return INT;  
@@ -86,6 +81,12 @@ int yylex();
 "\n"                            {yylineno += 1;}
 [\t\r ]+                         {;}
 ";"                             return SEMICOLON;
+
+        /* Identifier and Numbers */
+"true"                          return TRUE_VAL;
+"false"                         return FALSE_VAL;
+[a-zA-Z_][a-zA-Z0-9_]*          return IDENTIFIER;
+[0-9]+                          return NUMBER;
 
 %%
 
