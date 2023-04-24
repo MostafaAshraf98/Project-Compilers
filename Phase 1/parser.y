@@ -157,14 +157,14 @@ else_if_statement:
 /* While statement */
 
 while_statement:
-		WHILE OPENBRACKET expression CLOSEDBRACKET OPENCURL statements CLOSEDCURL   {printf("while statment\n");}
+		WHILE OPENBRACKET expression CLOSEDBRACKET OPENCURL statements CLOSEDCURL   {printf("while statement\n");}
 		| WHILE
 		;
 
 /* Do while statement */
 
 do_while_statement:
-	DO OPENCURL statements CLOSEDCURL WHILE OPENBRACKET expression CLOSEDBRACKET  {printf("do-while statment\n");}
+	DO OPENCURL statements CLOSEDCURL WHILE OPENBRACKET expression CLOSEDBRACKET  {printf("do-while statement\n");}
 	;
 
 /* For statement */
