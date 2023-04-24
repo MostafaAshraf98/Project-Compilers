@@ -1,3 +1,7 @@
 Old Projects/
 test.*
 .vscode
+Phase 1/
+!lexer.l
+!parser.y
+!make.bat

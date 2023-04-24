@@ -2,6 +2,7 @@
 	#include <stdio.h>
 	#include <stdlib.h>
 	#include <string.h>
+	extern FILE *yyin;
 	extern int yylineno; /* Line Number tacker from lexer */
 	extern int yylex(); 
 	extern void yyerror(char *s);
@@ -95,11 +96,9 @@
 %left MULT DIV MULT_EQ DIV_EQ
 %left GE LE EQ_EQ NE GT LT
 
-%start program
+%start statements
 
 %%
-
-program: statements;
 
 statements : 
     statements statement
@@ -108,12 +107,11 @@ statements :
 
 statement : 
 	
-	expression SEMICOLON 			
-	| assignment_statement			
+	expression SEMICOLON 	{printf("Expression statement\n")}		
+	| assignment_statement	{printf("Assignment Statement \n")}	
 	| var_declaration 				
 	| constant_declaration			
-    | enum_declaration                 
-    | enum_initialization              
+    | enum_statement                 
 	| if_statement						
 	| while_statement                   
 	| do_while_statement                
@@ -133,11 +131,11 @@ value: IDENTIFIER | NUMBER | TRUE_VAL | FALSE_VAL ;
 
 type:  INT | FLOAT | CHAR | STRING | BOOL;
 
-constant: 				NUMBER | STRING;
+constant: NUMBER | STRING;
 
 /* Variable Declaration */
 
-assignment_statement: 	type IDENTIFIER EQUAL value SEMICOLON | IDENTIFIER EQUAL value SEMICOLON {printf ("Assignment statement\n");};
+assignment_statement: 	type IDENTIFIER EQUAL value SEMICOLON | IDENTIFIER EQUAL value SEMICOLON;
 
 var_declaration:        type IDENTIFIER SEMICOLON {printf("Variable declaration\n");};
 
@@ -195,12 +193,13 @@ continue_statement: CONTINUE SEMICOLON;
 
 /* Enums */
 
+enum_statement: 		enum_declaration | enum_initialization;
 enum_initialization: 	ENUM IDENTIFIER IDENTIFIER EQUAL value SEMICOLON {printf("Enum initialization\n")};
 enum_declaration: 	    ENUM IDENTIFIER OPENCURL enum_list CLOSEDCURL SEMICOLON | ENUM IDENTIFIER SEMICOLON | CONST ENUM IDENTIFIER SEMICOLON {printf("Enum declaration\n")};
 enum_list:              enum_val | ;
 enum_val:               enum_val COMMA IDENTIFIER | IDENTIFIER EQUAL NUMBER |IDENTIFIER ;
 
-//  Mathematical Expressions
+/*  Mathematical Expressions */
 
 expression:
 	expression PLUS expression |
@@ -259,7 +258,7 @@ call_parameter:			call_parameter COMMA value | value ;
 
 int main (void)
 {
-    FILE * yyin = fopen("test.txt", "r+");
+    yyin = fopen("test.txt", "r+");
     if (yyin == NULL)
     {
         printf("File Not Found\n");
@@ -273,7 +272,7 @@ int main (void)
         {
             printf("%c",ch);
         }
-        printf("\n\n ====== Parsing ===== ");
+        printf("\n\n ====== Parsing =====\n\n");
         yyparse();
     }
     fclose(yyin);
