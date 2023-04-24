@@ -133,6 +133,8 @@ value: IDENTIFIER | NUMBER | TRUE_VAL | FALSE_VAL ;
 
 type:  INT | FLOAT | CHAR | STRING | BOOL;
 
+constant: 				NUMBER | STRING;
+
 /* Variable Declaration */
 
 assignment_statement: 	type IDENTIFIER EQUAL value SEMICOLON | IDENTIFIER EQUAL value SEMICOLON {printf ("Assignment statement\n");};
@@ -219,13 +221,11 @@ expression:
 	expression GT expression |
 	expression LT expression |
 
-
 	expression INC |
 	INC expression |
 	expression DEC |
 	DEC expression |
 
-	expression EQUAL expression |
 	expression AND expression |
 	expression OR expression |
 	NOT expression |
@@ -234,7 +234,7 @@ expression:
 
 /* Function Declaration */
 
-function: 				function_prototype statements {printf("Function Definition\n");};
+function: 				function_prototype statement {printf("Function Definition\n");};
 						
 return_value: 			value | ;
 
@@ -248,8 +248,6 @@ function_prototype:
 parameters: 			parameters COMMA single_parameter | single_parameter ;
 
 single_parameter: 		type IDENTIFIER | type IDENTIFIER EQUAL constant ;
-
-constant: 				NUMBER | STRING;
 
 function_call: 			IDENTIFIER OPENBRACKET call_parameters CLOSEDBRACKET SEMICOLON ;
 
