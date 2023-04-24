@@ -111,14 +111,14 @@ statement :
 	| assignment_statement	{printf("Assignment Statement \n")}	
 	| var_declaration 				
 	| constant_declaration			
-    | enum_statement                 
+        | enum_statement                 
 	| if_statement						
 	| while_statement                   
 	| do_while_statement                
 	| for_statement                     
-    | switch_statement 
-    | break_statement 
-    | continue_statement 
+        | switch_statement 
+        | break_statement 
+        | continue_statement 
 	| function							
 	| function_call						
 	| OPENCURL statements CLOSEDCURL
@@ -188,12 +188,12 @@ case_statement:
     ;
 
 /* Break or Continue */
-break_statement: BREAK SEMICOLON;
-continue_statement: CONTINUE SEMICOLON;
+break_statement: BREAK SEMICOLON {printf("Break statement\n")};
+continue_statement: CONTINUE SEMICOLON {printf("Continue statement\n")};
 
 /* Enums */
 
-enum_statement: 		enum_declaration | enum_initialization;
+enum_statement: 		enum_declaration | enum_initialization {printf("Enum statement\n")};
 enum_initialization: 	ENUM IDENTIFIER IDENTIFIER EQUAL value SEMICOLON {printf("Enum initialization\n")};
 enum_declaration: 	    ENUM IDENTIFIER OPENCURL enum_list CLOSEDCURL SEMICOLON | ENUM IDENTIFIER SEMICOLON | CONST ENUM IDENTIFIER SEMICOLON {printf("Enum declaration\n")};
 enum_list:              enum_val | ;
