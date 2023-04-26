@@ -127,15 +127,66 @@ statement :
 
 /* Values & Types*/
 
-value: IDENTIFIER | NUMBER | TRUE_VAL | FALSE_VAL ;
+value: IDENTIFIER | NUMBER | boolean_expression;
 
 type:  INT | FLOAT | CHAR | STRING | BOOL;
 
 constant: NUMBER | STRING;
 
+/*  Boolean Expressions */
+
+boolean_expression:
+	expression EQ_EQ expression 
+	| expression NE expression 
+ 
+	| expression GE expression 
+	| expression LE expression 
+	| 
+	| expression GT expression 
+	| expression LT expression 
+ 
+        | expression AND expression 
+	| expression OR expression 
+	| NOT expression 
+ 
+        | TRUE_VAL 
+        | FALSE_VAL
+        ;
+        
+/*  Mathematical Expressions */
+
+expression:
+	expression PLUS term 
+	| expression MINUS term 
+
+	| IDENTIFIER INC 
+	| INC IDENTIFIER 
+	| IDENTIFIER DEC 
+	| DEC IDENTIFIER 
+        | term
+	;
+term:
+        term MULT factor 
+        | term DIV factor
+        | factor 
+        ;
+
+factor: 
+        NUMBER 
+        | IDENTIFIER 
+        | OPENBRACKET expression CLOSEDBRACKET
+        ;
+
 /* Variable Declaration */
 
-assignment_statement: 	type IDENTIFIER EQUAL value SEMICOLON | IDENTIFIER EQUAL value SEMICOLON;
+assignment_statement: 	
+        type IDENTIFIER EQUAL value SEMICOLON
+        | IDENTIFIER EQUAL value SEMICOLON 
+        | IDENTIFIER PLUS_EQ expression 
+	| IDENTIFIER MINUS_EQ expression 
+	| IDENTIFIER MULT_EQ expression 
+	| IDENTIFIER DIV_EQ expression
+        ;
 
 var_declaration:        type IDENTIFIER SEMICOLON {printf("Variable declaration\n");};
 
@@ -144,37 +195,56 @@ constant_declaration: 	CONST type IDENTIFIER EQUAL value SEMICOLON  {printf("Con
 /* If statement */
 
 if_statement: 
-		IF OPENBRACKET expression CLOSEDBRACKET OPENCURL statements CLOSEDCURL else_if_statement  {printf("If then statement\n");}
-		| IF OPENBRACKET expression CLOSEDBRACKET OPENCURL statements CLOSEDCURL else_if_statement ELSE OPENCURL statements CLOSEDCURL {printf("If then else statement\n");}
+		IF OPENBRACKET value CLOSEDBRACKET OPENCURL statements CLOSEDCURL else_if_statement  {printf("If then statement\n");}
+		| IF OPENBRACKET value CLOSEDBRACKET OPENCURL statements CLOSEDCURL else_if_statement ELSE OPENCURL statements CLOSEDCURL {printf("If then else statement\n");}
 	;
 
 else_if_statement:
-    else_if_statement ELSEIF OPENBRACKET expression CLOSEDBRACKET OPENCURL statements CLOSEDCURL | 
+    else_if_statement ELSEIF OPENBRACKET value CLOSEDBRACKET OPENCURL statements CLOSEDCURL | 
     ;
 
 /* While statement */
 
 while_statement:
-		WHILE OPENBRACKET expression CLOSEDBRACKET OPENCURL statements CLOSEDCURL   {printf("while statement\n");}
-		| WHILE
+		WHILE OPENBRACKET value CLOSEDBRACKET OPENCURL statements CLOSEDCURL   {printf("while statement\n");}
 		;
 
 /* Do while statement */
 
 do_while_statement:
-	DO OPENCURL statements CLOSEDCURL WHILE OPENBRACKET expression CLOSEDBRACKET  {printf("do-while statement\n");}
+	DO OPENCURL statements CLOSEDCURL WHILE OPENBRACKET value CLOSEDBRACKET  {printf("do-while statement\n");}
 	;
 
 /* For statement */
 
 for_statement:
-	FOR OPENBRACKET assignment_statement expression SEMICOLON expression SEMICOLON CLOSEDBRACKET OPENCURL statements CLOSEDCURL {printf("for loop\n");}
+	FOR OPENBRACKET for_initialization value SEMICOLON for_expression SEMICOLON CLOSEDBRACKET OPENCURL statements CLOSEDCURL {printf("for loop\n");}
+        | FOR OPENBRACKET for_initialization SEMICOLON for_expression SEMICOLON CLOSEDBRACKET OPENCURL statements CLOSEDCURL {printf("for loop\n");}
 	;
 
+for_initialization:
+        assignment_statement;
+	| var_declaration 				
+	| constant_declaration
+        | expression
+        | value
+        |
+        ;
+
+for_expression:
+        IDENTIFIER EQUAL value SEMICOLON 
+        | IDENTIFIER PLUS_EQ expression 
+	| IDENTIFIER MINUS_EQ expression 
+	| IDENTIFIER MULT_EQ expression 
+	| IDENTIFIER DIV_EQ expression
+        | expression
+        | value
+        |
+        ;
 /* Switch statement */
 
 switch_statement:
-    SWITCH OPENBRACKET IDENTIFIER CLOSEDBRACKET OPENCURL case_list CLOSEDCURL {printf("switch statement\n");}
+    SWITCH OPENBRACKET value CLOSEDBRACKET OPENCURL case_list CLOSEDCURL {printf("switch statement\n");}
     ;
 
 case_list:
@@ -188,52 +258,21 @@ case_statement:
     ;
 
 /* Break or Continue */
+
 break_statement: BREAK SEMICOLON {printf("Break statement\n")};
 continue_statement: CONTINUE SEMICOLON {printf("Continue statement\n")};
 
 /* Enums */
 
 enum_statement: 		enum_declaration | enum_initialization {printf("Enum statement\n")};
-enum_initialization: 	ENUM IDENTIFIER IDENTIFIER EQUAL value SEMICOLON {printf("Enum initialization\n")};
-enum_declaration: 	    ENUM IDENTIFIER OPENCURL enum_list CLOSEDCURL SEMICOLON | ENUM IDENTIFIER SEMICOLON | CONST ENUM IDENTIFIER SEMICOLON {printf("Enum declaration\n")};
-enum_list:              enum_val | ;
-enum_val:               enum_val COMMA IDENTIFIER | IDENTIFIER EQUAL NUMBER |IDENTIFIER ;
-
-/*  Mathematical Expressions */
-
-expression:
-	expression PLUS expression |
-	expression MINUS expression |
-	expression MULT expression |
-	expression DIV expression |
-
-	expression PLUS_EQ expression |
-	expression MINUS_EQ expression |
-	expression MULT_EQ expression |
-	expression DIV_EQ expression |
-	expression EQ_EQ expression |
-
-	expression GE expression |
-	expression LE expression |
-	
-	expression NE expression |
-	expression GT expression |
-	expression LT expression |
-
-	expression INC |
-	INC expression |
-	expression DEC |
-	DEC expression |
-
-	expression AND expression |
-	expression OR expression |
-	NOT expression |
-    value 
-	;
+enum_initialization: 	        ENUM IDENTIFIER IDENTIFIER EQUAL value SEMICOLON {printf("Enum initialization\n")};
+enum_declaration: 	        ENUM IDENTIFIER OPENCURL enum_list CLOSEDCURL SEMICOLON | ENUM IDENTIFIER SEMICOLON | CONST ENUM IDENTIFIER SEMICOLON {printf("Enum declaration\n")};
+enum_list:                      enum_val | ;
+enum_val:                       enum_val COMMA IDENTIFIER | IDENTIFIER EQUAL NUMBER |IDENTIFIER ;
 
 /* Function Declaration */
 
-function: 				function_prototype statement {printf("Function Definition\n");};
+function: 			function_prototype statement {printf("Function Definition\n");};
 						
 return_value: 			value | ;
 
