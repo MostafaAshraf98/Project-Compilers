@@ -11,6 +11,7 @@
         /* Identifier and Numbers */
 %token IDENTIFIER
 %token NUMBER
+%token FLOAT_NUM
 %token TRUE_VAL
 %token FALSE_VAL
 
@@ -129,7 +130,7 @@ statement :
 
 type:  INT | FLOAT | CHAR | STRING | BOOL;
 
-constant: NUMBER | STRING;
+constant: NUMBER | FLOAT_NUM | STRING;
 
 /* Expression */
 
@@ -177,7 +178,8 @@ term:
         ;
 
 factor: 
-        NUMBER 
+        NUMBER
+        | FLOAT_NUM
         | IDENTIFIER 
         | OPENBRACKET expression CLOSEDBRACKET
         ;
@@ -224,15 +226,15 @@ do_while_statement:
 /* For statement */
 
 for_statement:
-	FOR OPENBRACKET for_initialization expression SEMICOLON for_expression SEMICOLON CLOSEDBRACKET OPENCURL statements CLOSEDCURL {printf("for loop\n");}
-        | FOR OPENBRACKET for_initialization SEMICOLON for_expression SEMICOLON CLOSEDBRACKET OPENCURL statements CLOSEDCURL {printf("for loop\n");}
+	FOR OPENBRACKET for_initialization expression SEMICOLON for_expression CLOSEDBRACKET OPENCURL statements CLOSEDCURL {printf("for loop\n");}
+        | FOR OPENBRACKET for_initialization SEMICOLON for_expression CLOSEDBRACKET OPENCURL statements CLOSEDCURL {printf("for loop\n");}
 	;
 
 for_initialization:
-        assignment_statement;
+        assignment_statement
 	| var_declaration 				
 	| constant_declaration
-        | expression
+        | expression SEMICOLON
         | SEMICOLON
         ;
 

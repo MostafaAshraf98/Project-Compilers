@@ -87,6 +87,7 @@ int yylex();
 "false"                         return FALSE_VAL;
 [a-zA-Z_][a-zA-Z0-9_]*          return IDENTIFIER;
 [0-9]+                          return NUMBER;
+[0-9]+\.[0-9]+                  return FLOAT_NUM;
 
 %%
 
