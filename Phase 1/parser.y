@@ -124,6 +124,7 @@ statement :
 	| function_call						
 	| OPENCURL statements CLOSEDCURL
 	| RETURN return_value SEMICOLON
+        | SEMICOLON
 	;
 
 /* Values & Types*/
