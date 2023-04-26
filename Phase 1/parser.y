@@ -107,7 +107,7 @@ statements :
 
 statement : 
 	
-	expression SEMICOLON 	{printf("Expression statement\n")}		
+	value SEMICOLON 	{printf("Expression statement\n")}		
 	| assignment_statement	{printf("Assignment Statement \n")}	
 	| var_declaration 				
 	| constant_declaration			
@@ -127,7 +127,7 @@ statement :
 
 /* Values & Types*/
 
-value: IDENTIFIER | NUMBER | boolean_expression;
+value: expression | boolean_expression;
 
 type:  INT | FLOAT | CHAR | STRING | BOOL;
 
@@ -136,39 +136,40 @@ constant: NUMBER | STRING;
 /*  Boolean Expressions */
 
 boolean_expression:
-	expression EQ_EQ expression 
-	| expression NE expression 
- 
-	| expression GE expression 
-	| expression LE expression 
-	| 
-	| expression GT expression 
-	| expression LT expression 
- 
+        expression EQ_EQ expression 
+        | expression NE expression 
+        | expression GE expression 
+        | expression LE expression 
+        | expression GT expression 
+        | expression LT expression 
         | expression AND expression 
-	| expression OR expression 
-	| NOT expression 
- 
+        | expression OR expression 
+        | NOT expression 
         | TRUE_VAL 
         | FALSE_VAL
-        ;
         
 /*  Mathematical Expressions */
 
 expression:
-	expression PLUS term 
-	| expression MINUS term 
+        binary_expression 
+        | unary_expression
+        ;
 
-	| IDENTIFIER INC 
-	| INC IDENTIFIER 
-	| IDENTIFIER DEC 
-	| DEC IDENTIFIER 
+unary_expression:
+        IDENTIFIER INC 
+        | IDENTIFIER DEC 
+        ;
+
+binary_expression:
+        binary_expression PLUS term 
+        | binary_expression MINUS term 
         | term
-	;
+        ;
+
 term:
-        term MULT factor 
+        factor 
+        | term MULT factor 
         | term DIV factor
-        | factor 
         ;
 
 factor: 
@@ -176,16 +177,17 @@ factor:
         | IDENTIFIER 
         | OPENBRACKET expression CLOSEDBRACKET
         ;
+                
 
 /* Variable Declaration */
 
 assignment_statement: 	
         type IDENTIFIER EQUAL value SEMICOLON
         | IDENTIFIER EQUAL value SEMICOLON 
-        | IDENTIFIER PLUS_EQ expression 
-	| IDENTIFIER MINUS_EQ expression 
-	| IDENTIFIER MULT_EQ expression 
-	| IDENTIFIER DIV_EQ expression
+        | IDENTIFIER PLUS_EQ value 
+	| IDENTIFIER MINUS_EQ value 
+	| IDENTIFIER MULT_EQ value 
+	| IDENTIFIER DIV_EQ value
         ;
 
 var_declaration:        type IDENTIFIER SEMICOLON {printf("Variable declaration\n");};
@@ -226,21 +228,20 @@ for_initialization:
         assignment_statement;
 	| var_declaration 				
 	| constant_declaration
-        | expression
         | value
-        |
+        | SEMICOLON
         ;
 
 for_expression:
         IDENTIFIER EQUAL value SEMICOLON 
-        | IDENTIFIER PLUS_EQ expression 
-	| IDENTIFIER MINUS_EQ expression 
-	| IDENTIFIER MULT_EQ expression 
-	| IDENTIFIER DIV_EQ expression
-        | expression
+        | IDENTIFIER PLUS_EQ value 
+	| IDENTIFIER MINUS_EQ value 
+	| IDENTIFIER MULT_EQ value 
+	| IDENTIFIER DIV_EQ value
         | value
         |
         ;
+
 /* Switch statement */
 
 switch_statement:
