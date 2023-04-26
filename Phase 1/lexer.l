@@ -88,6 +88,7 @@ int yylex();
 [a-zA-Z_][a-zA-Z0-9_]*          return IDENTIFIER;
 [0-9]+                          return NUMBER;
 [0-9]+\.[0-9]+                  return FLOAT_NUM;
+\"[^\"]*\"                      return STRING_VAL;
 
 %%
 

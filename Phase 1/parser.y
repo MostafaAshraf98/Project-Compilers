@@ -12,6 +12,7 @@
 %token IDENTIFIER
 %token NUMBER
 %token FLOAT_NUM
+%token STRING_VAL
 %token TRUE_VAL
 %token FALSE_VAL
 
@@ -129,15 +130,18 @@ statement :
 
 /* Values & Types*/
 
+value: expression | STRING_VAL;
+
 type:  INT | FLOAT | CHAR | STRING | BOOL;
 
-constant: NUMBER | FLOAT_NUM | STRING;
+constant: NUMBER | FLOAT_NUM | STRING_VAL | TRUE_VAL | FALSE_VAL;
 
 /* Expression */
 
 expression:
         boolean_expression
         | arithmetic_expression
+        ;
 
 /*  Boolean Expressions */
 
@@ -153,6 +157,7 @@ boolean_expression:
         | NOT expression
         | TRUE_VAL 
         | FALSE_VAL 
+        ;
         
 /*  Mathematical Expressions */
 
@@ -189,7 +194,7 @@ factor:
 /* Variable Declaration */
 
 assignment_statement: 	
-        type IDENTIFIER EQUAL expression SEMICOLON
+         type IDENTIFIER EQUAL value SEMICOLON
         | IDENTIFIER EQUAL expression SEMICOLON 
         | IDENTIFIER PLUS_EQ expression 
 	| IDENTIFIER MINUS_EQ expression 
@@ -199,35 +204,35 @@ assignment_statement:
 
 var_declaration:        type IDENTIFIER SEMICOLON {printf("Variable declaration\n");};
 
-constant_declaration: 	CONST type IDENTIFIER EQUAL expression SEMICOLON  {printf("Constant declaration\n");};
+constant_declaration: 	CONST type IDENTIFIER EQUAL value SEMICOLON  {printf("Constant declaration\n");};
 
 /* If statement */
 
 if_statement: 
-		IF OPENBRACKET expression CLOSEDBRACKET OPENCURL statements CLOSEDCURL else_if_statement  {printf("If then statement\n");}
-		| IF OPENBRACKET expression CLOSEDBRACKET OPENCURL statements CLOSEDCURL else_if_statement ELSE OPENCURL statements CLOSEDCURL {printf("If then else statement\n");}
+		IF OPENBRACKET value CLOSEDBRACKET OPENCURL statements CLOSEDCURL else_if_statement  {printf("If then statement\n");}
+		| IF OPENBRACKET value CLOSEDBRACKET OPENCURL statements CLOSEDCURL else_if_statement ELSE OPENCURL statements CLOSEDCURL {printf("If then else statement\n");}
 	;
 
 else_if_statement:
-    else_if_statement ELSEIF OPENBRACKET expression CLOSEDBRACKET OPENCURL statements CLOSEDCURL | 
+    else_if_statement ELSEIF OPENBRACKET value CLOSEDBRACKET OPENCURL statements CLOSEDCURL | 
     ;
 
 /* While statement */
 
 while_statement:
-		WHILE OPENBRACKET expression CLOSEDBRACKET OPENCURL statements CLOSEDCURL   {printf("while statement\n");}
+		WHILE OPENBRACKET value CLOSEDBRACKET OPENCURL statements CLOSEDCURL   {printf("while statement\n");}
 		;
 
 /* Do while statement */
 
 do_while_statement:
-	DO OPENCURL statements CLOSEDCURL WHILE OPENBRACKET expression CLOSEDBRACKET  {printf("do-while statement\n");}
+	DO OPENCURL statements CLOSEDCURL WHILE OPENBRACKET value CLOSEDBRACKET  {printf("do-while statement\n");}
 	;
 
 /* For statement */
 
 for_statement:
-	FOR OPENBRACKET for_initialization expression SEMICOLON for_expression CLOSEDBRACKET OPENCURL statements CLOSEDCURL {printf("for loop\n");}
+	FOR OPENBRACKET for_initialization value SEMICOLON for_expression CLOSEDBRACKET OPENCURL statements CLOSEDCURL {printf("for loop\n");}
         | FOR OPENBRACKET for_initialization SEMICOLON for_expression CLOSEDBRACKET OPENCURL statements CLOSEDCURL {printf("for loop\n");}
 	;
 
@@ -235,24 +240,24 @@ for_initialization:
         assignment_statement
 	| var_declaration 				
 	| constant_declaration
-        | expression SEMICOLON
+        | value SEMICOLON
         | SEMICOLON
         ;
 
 for_expression:
-        IDENTIFIER EQUAL expression SEMICOLON 
+        IDENTIFIER EQUAL value SEMICOLON 
         | IDENTIFIER PLUS_EQ expression 
 	| IDENTIFIER MINUS_EQ expression 
 	| IDENTIFIER MULT_EQ expression 
 	| IDENTIFIER DIV_EQ expression
-        | expression
+        | value
         |
         ;
 
 /* Switch statement */
 
 switch_statement:
-    SWITCH OPENBRACKET expression CLOSEDBRACKET OPENCURL case_list CLOSEDCURL {printf("switch statement\n");}
+    SWITCH OPENBRACKET value CLOSEDBRACKET OPENCURL case_list CLOSEDCURL {printf("switch statement\n");}
     ;
 
 case_list:
@@ -261,7 +266,7 @@ case_list:
     ;
 
 case_statement:
-    CASE expression COLON statements 
+    CASE value COLON statements 
     | DEFAULT COLON statements
     ;
 
@@ -273,7 +278,7 @@ continue_statement: CONTINUE SEMICOLON {printf("Continue statement\n")};
 /* Enums */
 
 enum_statement: 		enum_declaration | enum_initialization {printf("Enum statement\n")};
-enum_initialization: 	        ENUM IDENTIFIER IDENTIFIER EQUAL expression SEMICOLON {printf("Enum initialization\n")};
+enum_initialization: 	        ENUM IDENTIFIER IDENTIFIER EQUAL IDENTIFIER SEMICOLON {printf("Enum initialization\n")};
 enum_declaration: 	        ENUM IDENTIFIER OPENCURL enum_list CLOSEDCURL SEMICOLON | ENUM IDENTIFIER SEMICOLON | CONST ENUM IDENTIFIER SEMICOLON {printf("Enum declaration\n")};
 enum_list:                      enum_val | ;
 enum_val:                       enum_val COMMA IDENTIFIER | IDENTIFIER EQUAL NUMBER |IDENTIFIER ;
@@ -282,7 +287,7 @@ enum_val:                       enum_val COMMA IDENTIFIER | IDENTIFIER EQUAL NUM
 
 function: 			function_prototype statement {printf("Function Definition\n");};
 						
-return_value: 			expression | ;
+return_value: 			value | ;
 
 function_prototype:		
     type IDENTIFIER OPENBRACKET parameters CLOSEDBRACKET 
@@ -299,7 +304,7 @@ function_call: 			IDENTIFIER OPENBRACKET call_parameters CLOSEDBRACKET SEMICOLON
 
 call_parameters:		call_parameter |;
 
-call_parameter:			call_parameter COMMA expression | expression ;
+call_parameter:			call_parameter COMMA value | value ;
 
 %%
 
