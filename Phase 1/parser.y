@@ -196,10 +196,10 @@ factor:
 assignment_statement: 	
          type IDENTIFIER EQUAL value SEMICOLON
         | IDENTIFIER EQUAL expression SEMICOLON 
-        | IDENTIFIER PLUS_EQ expression 
-	| IDENTIFIER MINUS_EQ expression 
-	| IDENTIFIER MULT_EQ expression 
-	| IDENTIFIER DIV_EQ expression
+        | IDENTIFIER PLUS_EQ expression SEMICOLON 
+	| IDENTIFIER MINUS_EQ expression SEMICOLON
+	| IDENTIFIER MULT_EQ expression SEMICOLON
+	| IDENTIFIER DIV_EQ expression SEMICOLON
         ;
 
 var_declaration:        type IDENTIFIER SEMICOLON {printf("Variable declaration\n");};
