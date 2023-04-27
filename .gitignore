@@ -5,3 +5,4 @@ Phase 1/
 !lexer.l
 !parser.y
 !make.bat
+!delete.bat
