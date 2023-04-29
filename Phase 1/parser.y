@@ -202,7 +202,8 @@ assignment_statement:
 	| IDENTIFIER DIV_EQ expression SEMICOLON
         ;
 
-var_declaration:        type IDENTIFIER SEMICOLON {printf("Variable declaration\n");};
+var_declaration:        type IDENTIFIER SEMICOLON {printf("Variable declaration\n");}
+                        | ENUM IDENTIFIER IDENTIFIER SEMICOLON {printf("Enum variable declaration\n");}
 
 constant_declaration: 	CONST type IDENTIFIER EQUAL value SEMICOLON  {printf("Constant declaration\n");};
 
@@ -281,7 +282,7 @@ enum_statement: 		enum_declaration | enum_initialization {printf("Enum statement
 enum_initialization: 	        ENUM IDENTIFIER IDENTIFIER EQUAL IDENTIFIER SEMICOLON {printf("Enum initialization\n")};
 enum_declaration: 	        ENUM IDENTIFIER OPENCURL enum_list CLOSEDCURL SEMICOLON | ENUM IDENTIFIER SEMICOLON | CONST ENUM IDENTIFIER SEMICOLON {printf("Enum declaration\n")};
 enum_list:                      enum_val | ;
-enum_val:                       enum_val COMMA IDENTIFIER | IDENTIFIER EQUAL NUMBER |IDENTIFIER ;
+enum_val:                       enum_val COMMA IDENTIFIER | enum_val COMMA IDENTIFIER EQUAL NUMBER |  IDENTIFIER EQUAL NUMBER |IDENTIFIER ;
 
 /* Function Declaration */
 
