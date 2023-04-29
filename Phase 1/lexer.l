@@ -95,7 +95,7 @@ int yylex();
 
 int yywrap(void)
 {
-   return 0;
+   return 1;
 }
 
 /* This is called by our parser whenever there is a syntactical error. In other words something that does not suit the grammar. */

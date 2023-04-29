@@ -324,8 +324,18 @@ int main (void)
         {
             printf("%c",ch);
         }
-        printf("\n\n ====== Parsing =====\n\n");
-        yyparse();
+        fclose(testFile);
+        printf("\n\n====== Parsing =====\n\n");
+        int result = yyparse();
+
+        printf("\n=================\n");
+
+        if (result == 0) {
+            printf("Parsing Successful\n");
+        }
+        else {
+            printf("Parsing Failed\n");
+        }
     }
     fclose(yyin);
     return 0;
