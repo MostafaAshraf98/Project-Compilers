@@ -221,20 +221,20 @@ else_if_statement:
 /* While statement */
 
 while_statement:
-		WHILE OPENBRACKET value CLOSEDBRACKET OPENCURL statements CLOSEDCURL   {printf("while statement\n");}
+		WHILE OPENBRACKET value CLOSEDBRACKET statement   {printf("while statement\n");}
 		;
 
 /* Do while statement */
 
 do_while_statement:
-	DO OPENCURL statements CLOSEDCURL WHILE OPENBRACKET value CLOSEDBRACKET  {printf("do-while statement\n");}
+	DO statement WHILE OPENBRACKET value CLOSEDBRACKET  {printf("do-while statement\n");}
 	;
 
 /* For statement */
 
 for_statement:
-	FOR OPENBRACKET for_initialization value SEMICOLON for_expression CLOSEDBRACKET OPENCURL statements CLOSEDCURL {printf("for loop\n");}
-        | FOR OPENBRACKET for_initialization SEMICOLON for_expression CLOSEDBRACKET OPENCURL statements CLOSEDCURL {printf("for loop\n");}
+	FOR OPENBRACKET for_initialization value SEMICOLON for_expression CLOSEDBRACKET statement {printf("for loop\n");}
+        | FOR OPENBRACKET for_initialization SEMICOLON for_expression CLOSEDBRACKET statement {printf("for loop\n");}
 	;
 
 for_initialization:
