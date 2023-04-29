@@ -1,7 +1,7 @@
 %{
 #include<stdio.h>
 #include "parser.tab.h"
-int yylineno = 1;
+int yylineno = 0;
 void yyerror (char *s);
 int yylex();
 %}
@@ -79,7 +79,7 @@ int yylex();
 
         /* Stop Characters */
 "\n"                            {yylineno += 1;}
-[\t\r ]+                         {;}
+[\t\r ]+                        {;}
 ";"                             return SEMICOLON;
 
         /* Identifier and Numbers */
