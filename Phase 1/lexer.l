@@ -1,7 +1,7 @@
 %{
 #include<stdio.h>
 #include "parser.tab.h"
-int yylineno = 0;
+int yylineno = 1;
 void yyerror (char *s);
 int yylex();
 %}
