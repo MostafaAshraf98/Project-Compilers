@@ -111,7 +111,7 @@ statement :
 	
 	expression SEMICOLON 	{printf("Expression statement\n")}		
 	| assignment_statement	{printf("Assignment Statement \n")}	
-	| var_declaration 				
+	| var_declaration 	{printf("Variable declaration\n")}			
 	| constant_declaration			
         | enum_statement                 
 	| if_statement						
@@ -124,7 +124,7 @@ statement :
 	| function							
 	| function_call						
 	| OPENCURL statements CLOSEDCURL
-	| RETURN return_value SEMICOLON
+	| RETURN return_value SEMICOLON         {printf("Return statement\n")}
         | SEMICOLON
 	;
 
@@ -194,24 +194,27 @@ factor:
 /* Variable Declaration */
 
 assignment_statement: 	
-         type IDENTIFIER EQUAL value SEMICOLON
-        | IDENTIFIER EQUAL expression SEMICOLON 
+        IDENTIFIER EQUAL expression SEMICOLON 
         | IDENTIFIER PLUS_EQ expression SEMICOLON 
 	| IDENTIFIER MINUS_EQ expression SEMICOLON
 	| IDENTIFIER MULT_EQ expression SEMICOLON
 	| IDENTIFIER DIV_EQ expression SEMICOLON
+        | IDENTIFIER EQUAL function_call 
         ;
 
-var_declaration:        type IDENTIFIER SEMICOLON {printf("Variable declaration\n");}
-                        | ENUM IDENTIFIER IDENTIFIER SEMICOLON {printf("Enum variable declaration\n");}
+var_declaration:        
+         type IDENTIFIER EQUAL value SEMICOLON
+        | type IDENTIFIER EQUAL function_call
+        | type IDENTIFIER SEMICOLON 
+        | ENUM IDENTIFIER IDENTIFIER SEMICOLON 
 
 constant_declaration: 	CONST type IDENTIFIER EQUAL value SEMICOLON  {printf("Constant declaration\n");};
 
 /* If statement */
 
 if_statement: 
-		IF OPENBRACKET value CLOSEDBRACKET OPENCURL statements CLOSEDCURL else_if_statement  {printf("If then statement\n");}
-		| IF OPENBRACKET value CLOSEDBRACKET OPENCURL statements CLOSEDCURL else_if_statement ELSE OPENCURL statements CLOSEDCURL {printf("If then else statement\n");}
+        IF OPENBRACKET value CLOSEDBRACKET OPENCURL statements CLOSEDCURL else_if_statement  {printf("If then statement\n");}
+        | IF OPENBRACKET value CLOSEDBRACKET OPENCURL statements CLOSEDCURL else_if_statement ELSE OPENCURL statements CLOSEDCURL {printf("If then else statement\n");}
 	;
 
 else_if_statement:
@@ -221,13 +224,13 @@ else_if_statement:
 /* While statement */
 
 while_statement:
-		WHILE OPENBRACKET value CLOSEDBRACKET statement   {printf("while statement\n");}
+		WHILE OPENBRACKET value CLOSEDBRACKET statement   {printf("while loop\n");}
 		;
 
 /* Do while statement */
 
 do_while_statement:
-	DO statement WHILE OPENBRACKET value CLOSEDBRACKET  {printf("do-while statement\n");}
+	DO statement WHILE OPENBRACKET value CLOSEDBRACKET SEMICOLON  {printf("do-while loop\n");}
 	;
 
 /* For statement */
@@ -258,7 +261,7 @@ for_expression:
 /* Switch statement */
 
 switch_statement:
-    SWITCH OPENBRACKET value CLOSEDBRACKET OPENCURL case_list CLOSEDCURL {printf("switch statement\n");}
+    SWITCH OPENBRACKET value CLOSEDBRACKET OPENCURL case_list CLOSEDCURL {printf("switch case\n");}
     ;
 
 case_list:
