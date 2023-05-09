@@ -237,7 +237,6 @@ do_while_statement:
 
 for_statement:
 	FOR OPENBRACKET for_initialization value SEMICOLON for_expression CLOSEDBRACKET statement {printf("for loop\n");}
-        | FOR OPENBRACKET for_initialization SEMICOLON for_expression CLOSEDBRACKET statement {printf("for loop\n");}
 	;
 
 for_initialization:
