@@ -20,8 +20,12 @@ void createNewTable()
     currentSymbolTable = newSymbolTable;
 }
 
-bool addEntryToTable(SymbolTableEntry *entry, char* identifier)
+bool addEntryToTable(char* identifier,Lexeme* lexeme,Kind kind,bool isInit)
 {
+    SymbolTableEntry* entry = new SymbolTableEntry();
+    entry -> lexeme = lexeme;
+    entry -> kind = kind;
+    entry -> isInit = isInit;
     unordered_map<char*, SymbolTableEntry *> map = currentSymbolTable->entries;
     auto lex = map.find(identifier);
     if (lex != map.end())

@@ -628,6 +628,11 @@ assignment_statement:
                         printSemanticError("Undeclared Variable at line number ",yylineno);
                         return 0;
                 }
+                if(entry->isInit == false)
+                {
+                        printSemanticError("Variable not initialized at line number ",yylineno);
+                        return 0;
+                }
                 VariableType type1 = entry->lexeme->type;
                 VariableType type2 = $3->type;
                 if((type1 != INT_TYPE && type1 != FLOAT_TYPE) || (type2 != INT_TYPE && type2 != FLOAT_TYPE))
@@ -638,7 +643,6 @@ assignment_statement:
                         char* temp = concatStrings($1,strdup(" :+= "));
                         temp = concatStrings(temp,$3->stringRep);
                         addIntermidiateRep(temp);
-                        entry->isInit = true;
                         if(type1 == INT_TYPE && type2 == FLOAT_TYPE)
                         {
                                 entry->lexeme->intVal = entry->lexeme->intVal + (int)$3->floatVal ;
@@ -660,6 +664,11 @@ assignment_statement:
                         printSemanticError("Undeclared Variable at line number ",yylineno);
                         return 0;
                 }
+                if(entry->isInit == false)
+                {
+                        printSemanticError("Variable not initialized at line number ",yylineno);
+                        return 0;
+                }
                 VariableType type1 = entry->lexeme->type;
                 VariableType type2 = $3->type;
                 if((type1 != INT_TYPE && type1 != FLOAT_TYPE) || (type2 != INT_TYPE && type2 != FLOAT_TYPE))
@@ -670,7 +679,6 @@ assignment_statement:
                         char* temp = concatStrings($1,strdup(" :-= "));
                         temp = concatStrings(temp,$3->stringRep);
                         addIntermidiateRep(temp);
-                        entry->isInit = true;
                         if(type1 == INT_TYPE && type2 == FLOAT_TYPE)
                         {
                                 entry->lexeme->intVal = entry->lexeme->intVal - (int)$3->floatVal ;
@@ -692,6 +700,11 @@ assignment_statement:
                         printSemanticError("Undeclared Variable at line number ",yylineno);
                         return 0;
                 }
+                if(entry->isInit == false)
+                {
+                        printSemanticError("Variable not initialized at line number ",yylineno);
+                        return 0;
+                }
                 VariableType type1 = entry->lexeme->type;
                 VariableType type2 = $3->type;
                 if((type1 != INT_TYPE && type1 != FLOAT_TYPE) || (type2 != INT_TYPE && type2 != FLOAT_TYPE))
@@ -702,7 +715,6 @@ assignment_statement:
                         char* temp = concatStrings($1,strdup(" :*= "));
                         temp = concatStrings(temp,$3->stringRep);
                         addIntermidiateRep(temp);
-                        entry->isInit = true;
                         if(type1 == INT_TYPE && type2 == FLOAT_TYPE)
                         {
                                 entry->lexeme->intVal = entry->lexeme->intVal * (int)$3->floatVal ;
@@ -724,6 +736,11 @@ assignment_statement:
                         printSemanticError("Undeclared Variable at line number ",yylineno);
                         return 0;
                 }
+                if(entry->isInit == false)
+                {
+                        printSemanticError("Variable not initialized at line number ",yylineno);
+                        return 0;
+                }
                 VariableType type1 = entry->lexeme->type;
                 VariableType type2 = $3->type;
                 if((type1 != INT_TYPE && type1 != FLOAT_TYPE) || (type2 != INT_TYPE && type2 != FLOAT_TYPE))
@@ -734,7 +751,6 @@ assignment_statement:
                         char* temp = concatStrings($1,strdup(" :/= "));
                         temp = concatStrings(temp,$3->stringRep);
                         addIntermidiateRep(temp);
-                        entry->isInit = true;
                         if(type1 == INT_TYPE && type2 == FLOAT_TYPE)
                         {
                                 entry->lexeme->intVal = entry->lexeme->intVal / (int)$3->floatVal ;
@@ -753,7 +769,50 @@ assignment_statement:
 
 var_declaration:        
          type IDENTIFIER EQUAL value SEMICOLON
-        | type IDENTIFIER SEMICOLON 
+         {
+                SymbolTableEntry* entry = getIdEntry($2);
+                if(entry != NULL){
+                        printSemanticError("Variable already declared at line number ",yylineno);
+                        return 0;
+                }
+                VariableType type1 = $1;
+                VariableType type2 = $4->type;
+                if(!isTypeMatching(type1,type2))
+                {
+                        printSemanticError("Type mismatch in variable declaration at line number ",yylineno);
+                }else{
+                        Lexeme* lexeme = new Lexeme;
+                        lexeme->type = type1;
+                        lexeme -> stringRep = getCurrentCount();
+                        if(type1 == INT_TYPE && type2 == FLOAT_TYPE)
+                        {
+                                lexeme->intVal = (int)$4->floatVal;
+                        }else if (type1 == FLOAT_TYPE && type2 == INT_TYPE)
+                        {
+                                lexeme->floatVal = (float)$4->intVal;
+                        }else{
+                                lexeme = $4;
+                        }
+                        char* temp = concatStrings($2,strdup(" := "));
+                        temp = concatStrings(temp,$4->stringRep);
+                        addIntermidiateRep(temp);
+                        addEntryToTable($2,lexeme,VAR,true);
+                }
+         }
+        | type IDENTIFIER SEMICOLON
+         {
+                SymbolTableEntry* entry = getIdEntry($2);
+                if(entry != NULL){
+                        printSemanticError("Variable already declared at line number ",yylineno);
+                        return 0;
+                }
+
+                Lexeme* lexeme = new Lexeme;
+                lexeme->type = $1;
+                lexeme -> stringRep = getCurrentCount();
+                addEntryToTable($2,lexeme,VAR,false);
+        
+         }
         | ENUM IDENTIFIER IDENTIFIER SEMICOLON 
 
 constant_declaration: 	CONST type IDENTIFIER EQUAL value SEMICOLON  {printf("Constant declaration\n");};
