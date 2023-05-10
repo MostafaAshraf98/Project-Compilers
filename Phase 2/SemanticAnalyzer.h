@@ -24,7 +24,7 @@ bool addEntryToTable(SymbolTableEntry *entry, char* identifier)
     return true;
 }
 
-SymbolTableEntry *entryExistsInTable(char* identifier)
+SymbolTableEntry *getIdEntry(char* identifier)
 {
     unordered_map<char*, SymbolTableEntry *> map = currentSymbolTable->entries;
     SymbolTable *temp = currentSymbolTable;
@@ -47,6 +47,21 @@ SymbolTableEntry *entryExistsInTable(char* identifier)
 void exitCurrentScope()
 {
     currentSymbolTable = currentSymbolTable->parent;
+}
+
+VariableType checkIdType(char* identifier)
+{
+    SymbolTableEntry *entry = getIdEntry(identifier);
+    if (entry == NULL)
+        return VOID_TYPE;
+    return entry->lexeme->type;
+}
+
+bool isTypeMatching(VariableType type1, VariableType type2)
+{
+    if (type1 == type2 || (type1 == INT_TYPE && type2 == FLOAT_TYPE) || (type1 == FLOAT_TYPE && type2 == INT_TYPE))
+        return true;
+    return false;
 }
 
 #endif

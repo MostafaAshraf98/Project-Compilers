@@ -12,7 +12,7 @@
         /* Union */
 %union {
 VariableType varType;
-Lexeme lexeme;
+Lexeme* lexeme;
 char* stringValue;
 };
 
@@ -160,7 +160,7 @@ statement :
         | continue_statement 
 	| function							
 	| function_call						
-	| OPENCURL statements CLOSEDCURL
+	| OPENCURL {createNewTable();} statements CLOSEDCURL {exitCurrentScope();}
 	| RETURN return_value SEMICOLON         {printf("Return statement\n")}
         | SEMICOLON
 	;
@@ -183,7 +183,10 @@ expression:
 /*  Boolean Expressions */
 
 boolean_expression:
-        expression EQ_EQ arithmetic_expression 
+        expression EQ_EQ arithmetic_expression
+        {
+                
+        }
         | expression NE arithmetic_expression 
         | expression GE arithmetic_expression 
         | expression LE arithmetic_expression 

@@ -17,7 +17,6 @@ enum VariableType{
 };
 
 struct Lexeme{
-    public:
         VariableType type;
         int intVal;
         float floatVal;
@@ -29,9 +28,10 @@ struct Lexeme{
 };
 
 class SymbolTableEntry{
-    Lexeme lexeme;
-    bool isConst;
-    bool isInit;
+    public:
+        Lexeme* lexeme;
+        bool isConst;
+        bool isInit;
 };
 
 class SymbolTable
