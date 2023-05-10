@@ -13,13 +13,14 @@ enum VariableType{
     BOOL_TYPE,
     CHAR_TYPE,
     VOID_TYPE,
+    ENUM_TYPE
 };
 
 enum Kind{
     CONSTANT,
     VAR,
     FUNC,
-    PARAM,
+    PARAM
 };
 
 struct Lexeme{
@@ -30,6 +31,7 @@ struct Lexeme{
         char* stringVal;
         bool boolVal;
         char charVal;
+        unordered_map<char*, int> enumValues;
 };
 
 class SymbolTableEntry{
@@ -40,6 +42,7 @@ class SymbolTableEntry{
         bool isUsed = false;
         vector<VariableType> functionInputs;
         VariableType functionOutput;
+        SymbolTableEntry* pointerToEnum = NULL;
 };
 
 class SymbolTable

@@ -20,16 +20,14 @@ void createNewTable()
     currentSymbolTable = newSymbolTable;
 }
 
-bool addEntryToTable(char* identifier,Lexeme* lexeme,Kind kind,bool isInit)
+bool addEntryToTable(char* identifier,Lexeme* lexeme,Kind kind,bool isInit,SymbolTableEntry* pointerToEnum = NULL)
 {
     SymbolTableEntry* entry = new SymbolTableEntry();
     entry -> lexeme = lexeme;
     entry -> kind = kind;
     entry -> isInit = isInit;
-    unordered_map<char*, SymbolTableEntry *> map = currentSymbolTable->entries;
-    auto lex = map.find(identifier);
-    if (lex != map.end())
-        return false;
+    entry -> pointerToEnum = pointerToEnum;
+    
     (currentSymbolTable->entries)[identifier] = entry;
     return true;
 }

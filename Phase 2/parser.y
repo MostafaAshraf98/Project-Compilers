@@ -813,9 +813,28 @@ var_declaration:
                 addEntryToTable($2,lexeme,VAR,false);
         
          }
-        | ENUM IDENTIFIER IDENTIFIER SEMICOLON 
+        | ENUM IDENTIFIER IDENTIFIER SEMICOLON
+         {
+                SymbolTableEntry* pointerToEnum = getIdEntry($2);
+                SymbolTableEntry* entry = getIdEntry($3);
+                if(pointerToEnum == NULL){
+                        printSemanticError("Enumerator not declared at line number ",yylineno);
+                        return 0;
+                }
+                if(entry != NULL){
+                        printSemanticError("Variable already declared at line number ",yylineno);
+                        return 0;
+                }
 
-constant_declaration: 	CONST type IDENTIFIER EQUAL value SEMICOLON  {printf("Constant declaration\n");};
+                Lexeme* lexeme = new Lexeme;
+                lexeme->type = ENUM_TYPE;
+                lexeme -> stringRep = getCurrentCount();
+                addEntryToTable($2,lexeme,VAR,false,pointerToEnum);
+        
+         }
+
+constant_declaration: 	
+        CONST type IDENTIFIER EQUAL value SEMICOLON  {printf("Constant declaration\n");};
 
 /* If statement */
 
