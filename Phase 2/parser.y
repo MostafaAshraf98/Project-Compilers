@@ -185,16 +185,183 @@ expression:
 boolean_expression:
         expression EQ_EQ arithmetic_expression
         {
-                
+                VariableType type1 = $1->type;
+                VariableType type2 = $3->type;
+                if(!isTypeMatching(type1,type2))
+                {
+                        printSemanticError("Type mismatch in boolean expression at line number ",yylineno);
+                }else{
+                        Lexeme* lexeme = new Lexem;
+                        lexeme->type = BOOL_TYPE;
+                        lexeme -> stringRep = getCurrentCount();
+                        lexeme ->boolVal = checkEQ_EQ($1,$3);
+                        $$ = lexeme;
+                        char* temp = concatStrings(lexeme->stringRep,c_str(" := "));
+                        temp = concatStrings(temp,$1->stringRep);
+                        temp = concatStrings(temp,c_str(" == "));
+                        temp = concatStrings(temp,$3->stringRep);
+                        addIntermidiateRep(temp);
+                }
         }
         | expression NE arithmetic_expression 
-        | expression GE arithmetic_expression 
-        | expression LE arithmetic_expression 
-        | expression GT arithmetic_expression 
+        {
+                VariableType type1 = $1->type;
+                VariableType type2 = $3->type;
+                if(!isTypeMatching(type1,type2))
+                {
+                        printSemanticError("Type mismatch in boolean expression at line number ",yylineno);
+                }else{
+                        Lexeme* lexeme = new Lexem;
+                        lexeme->type = BOOL_TYPE;
+                        lexeme -> stringRep = getCurrentCount();
+                        lexeme ->boolVal = checkNE($1,$3);
+                        $$ = lexeme;
+                        char* temp = concatStrings(lexeme->stringRep,c_str(" := "));
+                        temp = concatStrings(temp,$1->stringRep);
+                        temp = concatStrings(temp,c_str(" != "));
+                        temp = concatStrings(temp,$3->stringRep);
+                        addIntermidiateRep(temp);
+                }
+        }
+        | expression GE arithmetic_expression
+        {
+                VariableType type1 = $1->type;
+                VariableType type2 = $3->type;
+                if(!isTypeMatching(type1,type2))
+                {
+                        printSemanticError("Type mismatch in boolean expression at line number ",yylineno);
+                }else{
+                        Lexeme* lexeme = new Lexem;
+                        lexeme->type = BOOL_TYPE;
+                        lexeme -> stringRep = getCurrentCount();
+                        lexeme ->boolVal = checkGE($1,$3);
+                        $$ = lexeme;
+                        char* temp = concatStrings(lexeme->stringRep,c_str(" := "));
+                        temp = concatStrings(temp,$1->stringRep);
+                        temp = concatStrings(temp,c_str(" >= "));
+                        temp = concatStrings(temp,$3->stringRep);
+                        addIntermidiateRep(temp);
+                }
+        } 
+        | expression LE arithmetic_expression
+        {
+                VariableType type1 = $1->type;
+                VariableType type2 = $3->type;
+                if(!isTypeMatching(type1,type2))
+                {
+                        printSemanticError("Type mismatch in boolean expression at line number ",yylineno);
+                }else{
+                        Lexeme* lexeme = new Lexem;
+                        lexeme->type = BOOL_TYPE;
+                        lexeme -> stringRep = getCurrentCount();
+                        lexeme ->boolVal = checkNE($1,$3);
+                        $$ = lexeme;
+                        char* temp = concatStrings(lexeme->stringRep,c_str(" := "));
+                        temp = concatStrings(temp,$1->stringRep);
+                        temp = concatStrings(temp,c_str(" <= "));
+                        temp = concatStrings(temp,$3->stringRep);
+                        addIntermidiateRep(temp);
+                }
+        } 
+        | expression GT arithmetic_expression
+        {
+                VariableType type1 = $1->type;
+                VariableType type2 = $3->type;
+                if(!isTypeMatching(type1,type2))
+                {
+                        printSemanticError("Type mismatch in boolean expression at line number ",yylineno);
+                }else{
+                        Lexeme* lexeme = new Lexem;
+                        lexeme->type = BOOL_TYPE;
+                        lexeme -> stringRep = getCurrentCount();
+                        $$ = lexeme;
+                        lexeme ->boolVal = checkGT($1,$3);
+                        $$ = lexeme;
+                        char* temp = concatStrings(lexeme->stringRep,c_str(" := "));
+                        temp = concatStrings(temp,$1->stringRep);
+                        temp = concatStrings(temp,c_str(" > "));
+                        temp = concatStrings(temp,$3->stringRep);
+                        addIntermidiateRep(temp);
+                }
+        }
         | expression LT arithmetic_expression 
-        | expression AND arithmetic_expression 
-        | expression OR arithmetic_expression 
+        {
+                VariableType type1 = $1->type;
+                VariableType type2 = $3->type;
+                if(!isTypeMatching(type1,type2))
+                {
+                        printSemanticError("Type mismatch in boolean expression at line number ",yylineno);
+                }else{
+                        Lexeme* lexeme = new Lexem;
+                        lexeme->type = BOOL_TYPE;
+                        lexeme -> stringRep = getCurrentCount();
+                        lexeme ->boolVal = checkLT($1,$3);
+                        $$ = lexeme;
+                        char* temp = concatStrings(lexeme->stringRep,c_str(" := "));
+                        temp = concatStrings(temp,$1->stringRep);
+                        temp = concatStrings(temp,c_str(" < "));
+                        temp = concatStrings(temp,$3->stringRep);
+                        addIntermidiateRep(temp);
+                }
+        }
+        | expression AND arithmetic_expression
+        {
+                VariableType type1 = $1->type;
+                VariableType type2 = $3->type;
+                if(type1 != BOOL_TYPE || type2 != BOOL_TYPE)
+                {
+                        printSemanticError("AND Operation should be between boolean types at line number ",yylineno);
+                }else{
+                        Lexeme* lexeme = new Lexem;
+                        lexeme->type = BOOL_TYPE;
+                        lexeme -> stringRep = getCurrentCount();
+                        lexeme ->boolVal = $1->boolVal && $3->boolVal;
+                        $$ = lexeme;
+                        char* temp = concatStrings(lexeme->stringRep,c_str(" := "));
+                        temp = concatStrings(temp,$1->stringRep);
+                        temp = concatStrings(temp,c_str(" AND "));
+                        temp = concatStrings(temp,$3->stringRep);
+                        addIntermidiateRep(temp);
+                }
+        } 
+        | expression OR arithmetic_expression
+        {
+                VariableType type1 = $1->type;
+                VariableType type2 = $3->type;
+                if(type1 != BOOL_TYPE || type2 != BOOL_TYPE)
+                {
+                        printSemanticError("OR Operation should be between boolean types at line number ",yylineno);
+                }else{
+                        Lexeme* lexeme = new Lexem;
+                        lexeme->type = BOOL_TYPE;
+                        lexeme -> stringRep = getCurrentCount();
+                        lexeme ->boolVal = $1->boolVal || $3->boolVal;
+                        $$ = lexeme;
+                        char* temp = concatStrings(lexeme->stringRep,c_str(" := "));
+                        temp = concatStrings(temp,$1->stringRep);
+                        temp = concatStrings(temp,c_str(" AND "));
+                        temp = concatStrings(temp,$3->stringRep);
+                        addIntermidiateRep(temp);
+                }
+        } 
         | NOT expression
+        {
+                VariableType type = $2->type;
+                if(type != BOOL_TYPE)
+                {
+                        printSemanticError("NOT Operation should be on boolean type at line number ",yylineno);
+                }else{
+                        Lexeme* lexeme = new Lexem;
+                        lexeme->type = BOOL_TYPE;
+                        lexeme -> stringRep = getCurrentCount();
+                        lexeme ->boolVal = !$2->boolVal;
+                        $$ = lexeme;
+                        char* temp = concatStrings(lexeme->stringRep,c_str(" := "));
+                        temp = concatStrings(temp,c_str(" NOT "));
+                        temp = concatStrings(temp,$2->stringRep);
+                        addIntermidiateRep(temp);
+                }
+        } 
         | TRUE_VAL 
         | FALSE_VAL 
         ;

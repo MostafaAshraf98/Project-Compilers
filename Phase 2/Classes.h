@@ -13,25 +13,33 @@ enum VariableType{
     BOOL_TYPE,
     CHAR_TYPE,
     VOID_TYPE,
-    FUNCTION_TYPE
+};
+
+enum Kind{
+    CONST,
+    VAR,
+    FUNC,
+    PARAM,
 };
 
 struct Lexeme{
         VariableType type;
+        char *stringRep;
         int intVal;
         float floatVal;
         char* stringVal;
         bool boolVal;
         char charVal;
-        // vector<VariableType> functionInputs;
-        // VariableType functionOutput;
 };
 
 class SymbolTableEntry{
     public:
         Lexeme* lexeme;
-        bool isConst;
+        Kind kind;
         bool isInit;
+        bool isUsed;
+        vector<VariableType> functionInputs;
+        VariableType functionOutput;
 };
 
 class SymbolTable
