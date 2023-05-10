@@ -18,6 +18,18 @@ char* stringValue;
 
         /* Rules types */
 %type<varType> type
+%type<lexeme> value
+%type<lexeme> constant
+%type<lexeme> expression
+%type<lexeme> boolean_expression
+%type<lexeme> arithmetic_expression
+%type<lexeme> unary_expression
+%type<lexeme> binary_expression
+%type<lexeme> term
+%type<lexeme> factor
+%type<lexeme> for_expression
+%type<lexeme> return_value
+
 
 
         /* Identifier and Values */
