@@ -191,14 +191,14 @@ boolean_expression:
                 {
                         printSemanticError("Type mismatch in boolean expression at line number ",yylineno);
                 }else{
-                        Lexeme* lexeme = new Lexem;
+                        Lexeme* lexeme = new Lexeme;
                         lexeme->type = BOOL_TYPE;
                         lexeme -> stringRep = getCurrentCount();
                         lexeme ->boolVal = checkEQ_EQ($1,$3);
                         $$ = lexeme;
-                        char* temp = concatStrings(lexeme->stringRep,c_str(" := "));
+                        char* temp = concatStrings(lexeme->stringRep,strdup(" := "));
                         temp = concatStrings(temp,$1->stringRep);
-                        temp = concatStrings(temp,c_str(" == "));
+                        temp = concatStrings(temp,strdup(" == "));
                         temp = concatStrings(temp,$3->stringRep);
                         addIntermidiateRep(temp);
                 }
@@ -211,14 +211,14 @@ boolean_expression:
                 {
                         printSemanticError("Type mismatch in boolean expression at line number ",yylineno);
                 }else{
-                        Lexeme* lexeme = new Lexem;
+                        Lexeme* lexeme = new Lexeme;
                         lexeme->type = BOOL_TYPE;
                         lexeme -> stringRep = getCurrentCount();
                         lexeme ->boolVal = checkNE($1,$3);
                         $$ = lexeme;
-                        char* temp = concatStrings(lexeme->stringRep,c_str(" := "));
+                        char* temp = concatStrings(lexeme->stringRep,strdup(" := "));
                         temp = concatStrings(temp,$1->stringRep);
-                        temp = concatStrings(temp,c_str(" != "));
+                        temp = concatStrings(temp,strdup(" != "));
                         temp = concatStrings(temp,$3->stringRep);
                         addIntermidiateRep(temp);
                 }
@@ -231,14 +231,14 @@ boolean_expression:
                 {
                         printSemanticError("Type mismatch in boolean expression at line number ",yylineno);
                 }else{
-                        Lexeme* lexeme = new Lexem;
+                        Lexeme* lexeme = new Lexeme;
                         lexeme->type = BOOL_TYPE;
                         lexeme -> stringRep = getCurrentCount();
                         lexeme ->boolVal = checkGE($1,$3);
                         $$ = lexeme;
-                        char* temp = concatStrings(lexeme->stringRep,c_str(" := "));
+                        char* temp = concatStrings(lexeme->stringRep,strdup(" := "));
                         temp = concatStrings(temp,$1->stringRep);
-                        temp = concatStrings(temp,c_str(" >= "));
+                        temp = concatStrings(temp,strdup(" >= "));
                         temp = concatStrings(temp,$3->stringRep);
                         addIntermidiateRep(temp);
                 }
@@ -251,14 +251,14 @@ boolean_expression:
                 {
                         printSemanticError("Type mismatch in boolean expression at line number ",yylineno);
                 }else{
-                        Lexeme* lexeme = new Lexem;
+                        Lexeme* lexeme = new Lexeme;
                         lexeme->type = BOOL_TYPE;
                         lexeme -> stringRep = getCurrentCount();
                         lexeme ->boolVal = checkNE($1,$3);
                         $$ = lexeme;
-                        char* temp = concatStrings(lexeme->stringRep,c_str(" := "));
+                        char* temp = concatStrings(lexeme->stringRep,strdup(" := "));
                         temp = concatStrings(temp,$1->stringRep);
-                        temp = concatStrings(temp,c_str(" <= "));
+                        temp = concatStrings(temp,strdup(" <= "));
                         temp = concatStrings(temp,$3->stringRep);
                         addIntermidiateRep(temp);
                 }
@@ -271,15 +271,15 @@ boolean_expression:
                 {
                         printSemanticError("Type mismatch in boolean expression at line number ",yylineno);
                 }else{
-                        Lexeme* lexeme = new Lexem;
+                        Lexeme* lexeme = new Lexeme;
                         lexeme->type = BOOL_TYPE;
                         lexeme -> stringRep = getCurrentCount();
                         $$ = lexeme;
                         lexeme ->boolVal = checkGT($1,$3);
                         $$ = lexeme;
-                        char* temp = concatStrings(lexeme->stringRep,c_str(" := "));
+                        char* temp = concatStrings(lexeme->stringRep,strdup(" := "));
                         temp = concatStrings(temp,$1->stringRep);
-                        temp = concatStrings(temp,c_str(" > "));
+                        temp = concatStrings(temp,strdup(" > "));
                         temp = concatStrings(temp,$3->stringRep);
                         addIntermidiateRep(temp);
                 }
@@ -292,14 +292,14 @@ boolean_expression:
                 {
                         printSemanticError("Type mismatch in boolean expression at line number ",yylineno);
                 }else{
-                        Lexeme* lexeme = new Lexem;
+                        Lexeme* lexeme = new Lexeme;
                         lexeme->type = BOOL_TYPE;
                         lexeme -> stringRep = getCurrentCount();
                         lexeme ->boolVal = checkLT($1,$3);
                         $$ = lexeme;
-                        char* temp = concatStrings(lexeme->stringRep,c_str(" := "));
+                        char* temp = concatStrings(lexeme->stringRep,strdup(" := "));
                         temp = concatStrings(temp,$1->stringRep);
-                        temp = concatStrings(temp,c_str(" < "));
+                        temp = concatStrings(temp,strdup(" < "));
                         temp = concatStrings(temp,$3->stringRep);
                         addIntermidiateRep(temp);
                 }
@@ -312,14 +312,14 @@ boolean_expression:
                 {
                         printSemanticError("AND Operation should be between boolean types at line number ",yylineno);
                 }else{
-                        Lexeme* lexeme = new Lexem;
+                        Lexeme* lexeme = new Lexeme;
                         lexeme->type = BOOL_TYPE;
                         lexeme -> stringRep = getCurrentCount();
                         lexeme ->boolVal = $1->boolVal && $3->boolVal;
                         $$ = lexeme;
-                        char* temp = concatStrings(lexeme->stringRep,c_str(" := "));
+                        char* temp = concatStrings(lexeme->stringRep,strdup(" := "));
                         temp = concatStrings(temp,$1->stringRep);
-                        temp = concatStrings(temp,c_str(" AND "));
+                        temp = concatStrings(temp,strdup(" AND "));
                         temp = concatStrings(temp,$3->stringRep);
                         addIntermidiateRep(temp);
                 }
@@ -332,14 +332,14 @@ boolean_expression:
                 {
                         printSemanticError("OR Operation should be between boolean types at line number ",yylineno);
                 }else{
-                        Lexeme* lexeme = new Lexem;
+                        Lexeme* lexeme = new Lexeme;
                         lexeme->type = BOOL_TYPE;
                         lexeme -> stringRep = getCurrentCount();
                         lexeme ->boolVal = $1->boolVal || $3->boolVal;
                         $$ = lexeme;
-                        char* temp = concatStrings(lexeme->stringRep,c_str(" := "));
+                        char* temp = concatStrings(lexeme->stringRep,strdup(" := "));
                         temp = concatStrings(temp,$1->stringRep);
-                        temp = concatStrings(temp,c_str(" AND "));
+                        temp = concatStrings(temp,strdup(" AND "));
                         temp = concatStrings(temp,$3->stringRep);
                         addIntermidiateRep(temp);
                 }
@@ -351,13 +351,13 @@ boolean_expression:
                 {
                         printSemanticError("NOT Operation should be on boolean type at line number ",yylineno);
                 }else{
-                        Lexeme* lexeme = new Lexem;
+                        Lexeme* lexeme = new Lexeme;
                         lexeme->type = BOOL_TYPE;
                         lexeme -> stringRep = getCurrentCount();
                         lexeme ->boolVal = !$2->boolVal;
                         $$ = lexeme;
-                        char* temp = concatStrings(lexeme->stringRep,c_str(" := "));
-                        temp = concatStrings(temp,c_str(" NOT "));
+                        char* temp = concatStrings(lexeme->stringRep,strdup(" := "));
+                        temp = concatStrings(temp,strdup(" NOT "));
                         temp = concatStrings(temp,$2->stringRep);
                         addIntermidiateRep(temp);
                 }

@@ -16,7 +16,7 @@ enum VariableType{
 };
 
 enum Kind{
-    CONST,
+    CONSTANT,
     VAR,
     FUNC,
     PARAM,

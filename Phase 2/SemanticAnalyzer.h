@@ -3,6 +3,7 @@
 
 #include "Classes.h"
 #include<string>
+#include <cstring>
 using namespace std;
 
 SymbolTable *currentSymbolTable = new SymbolTable();
