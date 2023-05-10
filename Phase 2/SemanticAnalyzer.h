@@ -2,7 +2,6 @@
 #define SEMANTICANALYZER_H
 
 #include "Classes.h"
-#include <iostream>
 using namespace std;
 
 SymbolTable *currentSymbolTable = new SymbolTable();
@@ -15,9 +14,9 @@ void createNewTable()
     currentSymbolTable = newSymbolTable;
 }
 
-bool addEntryToTable(SymbolTableEntry *entry, string identifier)
+bool addEntryToTable(SymbolTableEntry *entry, char* identifier)
 {
-    unordered_map<string, SymbolTableEntry *> map = currentSymbolTable->entries;
+    unordered_map<char*, SymbolTableEntry *> map = currentSymbolTable->entries;
     auto lex = map.find(identifier);
     if (lex != map.end())
         return false;
@@ -25,9 +24,9 @@ bool addEntryToTable(SymbolTableEntry *entry, string identifier)
     return true;
 }
 
-SymbolTableEntry *entryExistsInTable(string identifier)
+SymbolTableEntry *entryExistsInTable(char* identifier)
 {
-    unordered_map<string, SymbolTableEntry *> map = currentSymbolTable->entries;
+    unordered_map<char*, SymbolTableEntry *> map = currentSymbolTable->entries;
     SymbolTable *temp = currentSymbolTable;
     while (currentSymbolTable != NULL)
     {

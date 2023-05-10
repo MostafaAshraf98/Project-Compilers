@@ -2,23 +2,22 @@
 	#include <stdio.h>
 	#include <stdlib.h>
 	#include <stdarg.h>
-	#include <string.h>
         #include "SemanticAnalyzer.h"
 	extern FILE *yyin;
 	extern int yylineno; /* Line Number tacker from lexer */
 	extern int yylex(); 
-	extern void yyerror(char *s);
+	extern void yyerror(string s);
 %}
 
         /* Union */
 %union {
-VariableType type;
+VariableType varType;
 Lexeme lexeme;
 char* stringValue;
 };
 
         /* Rules types */
-%type<type> type
+%type<varType> type
 
 
         /* Identifier and Values */
@@ -74,11 +73,11 @@ char* stringValue;
 %token CHAR
 %token BOOL
 %token STRING
-%type<type> INT  
-%type<type> FLOAT
-%type<type> CHAR
-%type<type> BOOL
-%type<type> STRING
+%type<varType> INT  
+%type<varType> FLOAT
+%type<varType> CHAR
+%type<varType> BOOL
+%type<varType> STRING
 
 
         /* if then else statement */

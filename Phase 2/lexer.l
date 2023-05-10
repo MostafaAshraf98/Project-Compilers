@@ -1,7 +1,7 @@
 %{
 #include<stdio.h>
-#include "parser.tab.h"
 #include "Classes.h"
+#include "parser.tab.h"
 int yylineno = 1;
 void yyerror (char *s);
 int yylex();
@@ -44,23 +44,23 @@ int yylex();
 
         /* Types */
 "int"                           {
-                                    yylval.type = VariableType.INT;
+                                    yylval.varType = INT_TYPE;
                                     return INT;  
                                 }
 "float"                         {
-                                    yylval.type = VariableType.FLOAT;
+                                    yylval.varType = FLOAT_TYPE;
                                     return FLOAT;  
                                 }
 "char"                          {
-                                    yylval.type = VariableType.CHAR;
+                                    yylval.varType = CHAR_TYPE;
                                     return CHAR;  
                                 }
 "bool"                          {
-                                    yylval.type = VariableType.BOOL;
+                                    yylval.varType = BOOL_TYPE;
                                     return BOOL;  
                                 }
 "string"                        {
-                                    yylval.type = VariableType.STRING;
+                                    yylval.varType = STRING_TYPE;
                                     return STRING;  
                                 }
 
@@ -105,39 +105,39 @@ int yylex();
         /* TRUE VALUE*/
 "true"                          {
                                     yylval.lexeme.boolVal = true;
-                                    yylval.lexeme.type = VariableType.BOOL;
-                                    return TRUE;
+                                    yylval.lexeme.type = BOOL_TYPE;
+                                    return TRUE_VAL;
                                 }
         /* FALSE VALUE*/
 "false"                          {
                                     yylval.lexeme.boolVal = false;
-                                    yylval.lexeme.type = VariableType.BOOL;
-                                    return FALSE;
+                                    yylval.lexeme.type = BOOL_TYPE;
+                                    return FALSE_VAL;
                                 }
 
         /* INT VALUE*/
 [0-9]+                          { 
                                     yylval.lexeme.intVal = atoi(yytext); 
-                                    yylval.lexeme.type = VariableType.INT;
+                                    yylval.lexeme.type = INT_TYPE;
                                     return INT;                               
                                 }
         /* FLOAT VALUE*/
 [0-9]+[\.][0-9]+                {
                                     yylval.lexeme.floatVal = atof(yytext);
-                                    yylval.lexeme.type = VariableType.FLOAT;
+                                    yylval.lexeme.type = FLOAT_TYPE;
                                     return FLOAT;                                 
                                 } 
 
         /* STRING VALUE   */
 ["][a-zA-Z0-9]*["]              {   
                                     yylval.lexeme.stringVal = strdup(yytext);
-                                    yylval.lexeme.type = VariableType.STRING;
+                                    yylval.lexeme.type = STRING_TYPE;
                                     return STRING;
                                 }
         /* CHAR VALUE*/
 ['][a-zA-Z0-9][']              {   
                                     yylval.lexeme.charVal = yytext[1];
-                                    yylval.lexeme.type = VariableType.CHAR;
+                                    yylval.lexeme.type = CHAR_TYPE;
                                     return CHAR;
                                 }
         /* IDENTIFIER VALUE*/
@@ -155,7 +155,7 @@ int yywrap(void)
 }
 
 /* This is called by our parser whenever there is a syntactical error. In other words something that does not suit the grammar. */
-void yyerror (char *s) {
+void yyerror (string s) {
     fprintf(stderr, "\n ERROR LINE %d :\n %s \n", yylineno, s);
     exit(0);
 } 

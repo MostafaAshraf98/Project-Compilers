@@ -3,28 +3,29 @@
 
 #include<unordered_map>
 #include <iostream>
+#include <vector>
 using namespace std;
 
-static enum variableType{
-    INT,
-    FLOAT,
-    STRING,
-    BOOL,
-    CHAR,
-    VOID,
-    FUNCTION
+enum VariableType{
+    INT_TYPE,
+    FLOAT_TYPE,
+    STRING_TYPE,
+    BOOL_TYPE,
+    CHAR_TYPE,
+    VOID_TYPE,
+    FUNCTION_TYPE
 };
 
-class Lexeme{
+struct Lexeme{
     public:
-        variableType type;
+        VariableType type;
         int intVal;
         float floatVal;
-        string stringVal;
+        char* stringVal;
         bool boolVal;
         char charVal;
-        vector<variableType> functionInputs;
-        variableType functionOutput;
+        // vector<VariableType> functionInputs;
+        // VariableType functionOutput;
 };
 
 class SymbolTableEntry{
@@ -36,7 +37,7 @@ class SymbolTableEntry{
 class SymbolTable
 {
 public:
-    unordered_map<string, SymbolTableEntry*> entries;
+    unordered_map<char*, SymbolTableEntry*> entries;
     SymbolTable* parent = NULL;
     vector<SymbolTable *> children;
 };
