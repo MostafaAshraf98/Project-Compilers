@@ -36,8 +36,8 @@ class SymbolTableEntry{
     public:
         Lexeme* lexeme;
         Kind kind;
-        bool isInit;
-        bool isUsed;
+        bool isInit = false;
+        bool isUsed = false;
         vector<VariableType> functionInputs;
         VariableType functionOutput;
 };

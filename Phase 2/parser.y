@@ -29,6 +29,7 @@ char* stringValue;
 %type<lexeme> factor
 %type<lexeme> for_expression
 %type<lexeme> return_value
+%type<lexeme> function_call
 
 
 
@@ -159,7 +160,6 @@ statement :
         | break_statement 
         | continue_statement 
 	| function							
-	| function_call						
 	| OPENCURL {createNewTable();} statements CLOSEDCURL {exitCurrentScope();}
 	| RETURN return_value SEMICOLON         {printf("Return statement\n")}
         | SEMICOLON
@@ -381,6 +381,11 @@ unary_expression:
                         printSemanticError("Variable not declared at line number ",yylineno);
                         return 0;
                 }
+                if(entry->isInit == false)
+                {
+                        printSemanticError("Variable not initialized at line number ",yylineno);
+                        return 0;
+                }
                 VariableType type = entry->lexeme->type;
                 if(type != INT_TYPE && type != FLOAT_TYPE)
                 {
@@ -411,6 +416,11 @@ unary_expression:
                 SymbolTableEntry* entry = getIdEntry($1);
                 if(entry == NULL){
                         printSemanticError("Variable not declared at line number ",yylineno);
+                        return 0;
+                }
+                if(entry->isInit == false)
+                {
+                        printSemanticError("Variable not initialized at line number ",yylineno);
                         return 0;
                 }
                 VariableType type = entry->lexeme->type;
@@ -559,15 +569,17 @@ term:
 factor: 
         INT_VAL
         | FLOAT_VAL
+        | function_call
         | IDENTIFIER
         {
                 SymbolTableEntry* entry = getIdEntry($1);
-                char* id = $1
                 if(entry == NULL){
                         printSemanticError("Variable not declared at line number ",yylineno);
                         return 0;
                 }
+                char* id = $1;
                 $$ = entry->lexeme;
+                entry->isUsed = true;
                 $$->stringRep = id;
         }  
         | OPENBRACKET expression CLOSEDBRACKET
@@ -580,17 +592,167 @@ factor:
 /* Variable Declaration */
 
 assignment_statement: 	
-        IDENTIFIER EQUAL expression SEMICOLON 
-        | IDENTIFIER PLUS_EQ expression SEMICOLON 
+        IDENTIFIER EQUAL expression SEMICOLON
+        {
+                SymbolTableEntry* entry = getIdEntry($1);
+                if(entry == NULL){
+                        printSemanticError("Undeclared Variable at line number ",yylineno);
+                        return 0;
+                }
+                VariableType type1 = entry->lexeme->type;
+                VariableType type2 = $3->type;
+                if(!isTypeMatching(type1,type2))
+                {
+                        printSemanticError("Type mismatch in assignment statement at line number ",yylineno);
+                }else{
+                        char* temp = concatStrings($1,strdup(" := "));
+                        temp = concatStrings(temp,$3->stringRep);
+                        addIntermidiateRep(temp);
+                        entry->isInit = true;
+                        if(type1 == INT_TYPE && type2 == FLOAT_TYPE)
+                        {
+                                entry->lexeme->intVal = (int)$3->floatVal;
+                                 
+                        }else if (type1 == FLOAT_TYPE && type2 == INT_TYPE)
+                        {
+                                entry->lexeme->floatVal = (float)$3->intVal;
+                        }else{
+                                entry->lexeme = $3;
+                        }
+                }
+        } 
+        | IDENTIFIER PLUS_EQ expression SEMICOLON
+        {
+                SymbolTableEntry* entry = getIdEntry($1);
+                if(entry == NULL){
+                        printSemanticError("Undeclared Variable at line number ",yylineno);
+                        return 0;
+                }
+                VariableType type1 = entry->lexeme->type;
+                VariableType type2 = $3->type;
+                if((type1 != INT_TYPE && type1 != FLOAT_TYPE) || (type2 != INT_TYPE && type2 != FLOAT_TYPE))
+                {
+                        printSemanticError("Addition operation must be between 2 numbers at line number ",yylineno);
+                
+                }else{
+                        char* temp = concatStrings($1,strdup(" :+= "));
+                        temp = concatStrings(temp,$3->stringRep);
+                        addIntermidiateRep(temp);
+                        entry->isInit = true;
+                        if(type1 == INT_TYPE && type2 == FLOAT_TYPE)
+                        {
+                                entry->lexeme->intVal = entry->lexeme->intVal + (int)$3->floatVal ;
+                        }else if (type1 == FLOAT_TYPE && type2 == INT_TYPE)
+                        {
+                                entry->lexeme->floatVal = entry->lexeme->floatVal + (float)$3->intVal ;
+                        }else if (type1 == INT_TYPE && type2 == INT_TYPE)
+                        {
+                                entry->lexeme->intVal = entry->lexeme->intVal + $3->intVal ;
+                        }else{
+                                entry->lexeme->floatVal = entry->lexeme->floatVal + $3->floatVal ;
+                        }
+                }
+        } 
 	| IDENTIFIER MINUS_EQ expression SEMICOLON
+        {
+                SymbolTableEntry* entry = getIdEntry($1);
+                if(entry == NULL){
+                        printSemanticError("Undeclared Variable at line number ",yylineno);
+                        return 0;
+                }
+                VariableType type1 = entry->lexeme->type;
+                VariableType type2 = $3->type;
+                if((type1 != INT_TYPE && type1 != FLOAT_TYPE) || (type2 != INT_TYPE && type2 != FLOAT_TYPE))
+                {
+                        printSemanticError("Subtraction operation must be between 2 numbers at line number ",yylineno);
+                
+                }else{
+                        char* temp = concatStrings($1,strdup(" :-= "));
+                        temp = concatStrings(temp,$3->stringRep);
+                        addIntermidiateRep(temp);
+                        entry->isInit = true;
+                        if(type1 == INT_TYPE && type2 == FLOAT_TYPE)
+                        {
+                                entry->lexeme->intVal = entry->lexeme->intVal - (int)$3->floatVal ;
+                        }else if (type1 == FLOAT_TYPE && type2 == INT_TYPE)
+                        {
+                                entry->lexeme->floatVal = entry->lexeme->floatVal - (float)$3->intVal ;
+                        }else if (type1 == INT_TYPE && type2 == INT_TYPE)
+                        {
+                                entry->lexeme->intVal = entry->lexeme->intVal - $3->intVal ;
+                        }else{
+                                entry->lexeme->floatVal = entry->lexeme->floatVal - $3->floatVal ;
+                        }
+                }
+        } 
 	| IDENTIFIER MULT_EQ expression SEMICOLON
+        {
+                SymbolTableEntry* entry = getIdEntry($1);
+                if(entry == NULL){
+                        printSemanticError("Undeclared Variable at line number ",yylineno);
+                        return 0;
+                }
+                VariableType type1 = entry->lexeme->type;
+                VariableType type2 = $3->type;
+                if((type1 != INT_TYPE && type1 != FLOAT_TYPE) || (type2 != INT_TYPE && type2 != FLOAT_TYPE))
+                {
+                        printSemanticError("Multiplication operation must be between 2 numbers at line number ",yylineno);
+                
+                }else{
+                        char* temp = concatStrings($1,strdup(" :*= "));
+                        temp = concatStrings(temp,$3->stringRep);
+                        addIntermidiateRep(temp);
+                        entry->isInit = true;
+                        if(type1 == INT_TYPE && type2 == FLOAT_TYPE)
+                        {
+                                entry->lexeme->intVal = entry->lexeme->intVal * (int)$3->floatVal ;
+                        }else if (type1 == FLOAT_TYPE && type2 == INT_TYPE)
+                        {
+                                entry->lexeme->floatVal = entry->lexeme->floatVal * (float)$3->intVal ;
+                        }else if (type1 == INT_TYPE && type2 == INT_TYPE)
+                        {
+                                entry->lexeme->intVal = entry->lexeme->intVal * $3->intVal ;
+                        }else{
+                                entry->lexeme->floatVal = entry->lexeme->floatVal * $3->floatVal ;
+                        }
+                }
+        } 
 	| IDENTIFIER DIV_EQ expression SEMICOLON
-        | IDENTIFIER EQUAL function_call 
+        {
+                SymbolTableEntry* entry = getIdEntry($1);
+                if(entry == NULL){
+                        printSemanticError("Undeclared Variable at line number ",yylineno);
+                        return 0;
+                }
+                VariableType type1 = entry->lexeme->type;
+                VariableType type2 = $3->type;
+                if((type1 != INT_TYPE && type1 != FLOAT_TYPE) || (type2 != INT_TYPE && type2 != FLOAT_TYPE))
+                {
+                        printSemanticError("Division operation must be between 2 numbers at line number ",yylineno);
+                
+                }else{
+                        char* temp = concatStrings($1,strdup(" :/= "));
+                        temp = concatStrings(temp,$3->stringRep);
+                        addIntermidiateRep(temp);
+                        entry->isInit = true;
+                        if(type1 == INT_TYPE && type2 == FLOAT_TYPE)
+                        {
+                                entry->lexeme->intVal = entry->lexeme->intVal / (int)$3->floatVal ;
+                        }else if (type1 == FLOAT_TYPE && type2 == INT_TYPE)
+                        {
+                                entry->lexeme->floatVal = entry->lexeme->floatVal / (float)$3->intVal ;
+                        }else if (type1 == INT_TYPE && type2 == INT_TYPE)
+                        {
+                                entry->lexeme->intVal = entry->lexeme->intVal / $3->intVal ;
+                        }else{
+                                entry->lexeme->floatVal = entry->lexeme->floatVal / $3->floatVal ;
+                        }
+                }
+        } 
         ;
 
 var_declaration:        
          type IDENTIFIER EQUAL value SEMICOLON
-        | type IDENTIFIER EQUAL function_call
         | type IDENTIFIER SEMICOLON 
         | ENUM IDENTIFIER IDENTIFIER SEMICOLON 
 
@@ -689,7 +851,7 @@ parameters: 			parameters COMMA single_parameter | single_parameter ;
 
 single_parameter: 		type IDENTIFIER | type IDENTIFIER EQUAL constant ;
 
-function_call: 			IDENTIFIER OPENBRACKET call_parameters CLOSEDBRACKET SEMICOLON ;
+function_call: 			IDENTIFIER OPENBRACKET call_parameters CLOSEDBRACKET ;
 
 call_parameters:		call_parameter |;
 
