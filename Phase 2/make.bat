@@ -1,5 +1,5 @@
 flex lexer.l
 bison -d -v parser.y
-gcc lex.yy.c parser.tab.c
-a.exe
-cmd /k
+g++ -o program.exe lex.yy.c parser.tab.c
+program.exe
+pause

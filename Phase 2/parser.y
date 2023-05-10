@@ -1,20 +1,41 @@
 %{
 	#include <stdio.h>
 	#include <stdlib.h>
+	#include <stdarg.h>
 	#include <string.h>
+        #include "SemanticAnalyzer.h"
 	extern FILE *yyin;
 	extern int yylineno; /* Line Number tacker from lexer */
 	extern int yylex(); 
 	extern void yyerror(char *s);
 %}
 
-        /* Identifier and Numbers */
+        /* Union */
+%union {
+VariableType type;
+Lexeme lexeme;
+char* stringValue;
+};
+
+        /* Rules types */
+%type<type> type
+
+
+        /* Identifier and Values */
 %token IDENTIFIER
-%token NUMBER
-%token FLOAT_NUM
+%token INT_VAL
+%token FLOAT_VAL
+%token CHAR_VAL
 %token STRING_VAL
 %token TRUE_VAL
 %token FALSE_VAL
+%type<stringValue> IDENTIFIER
+%type<lexeme> INT_VAL
+%type<lexeme> FLOAT_VAL
+%type<lexeme> CHAR_VAL
+%type<lexeme> STRING_VAL
+%type<lexeme> TRUE_VAL
+%type<lexeme> FALSE_VAL
 
         /* Constant */
 %token CONST
@@ -53,6 +74,11 @@
 %token CHAR
 %token BOOL
 %token STRING
+%type<type> INT  
+%type<type> FLOAT
+%type<type> CHAR
+%type<type> BOOL
+%type<type> STRING
 
 
         /* if then else statement */
@@ -134,7 +160,7 @@ value: expression | STRING_VAL;
 
 type:  INT | FLOAT | CHAR | STRING | BOOL;
 
-constant: NUMBER | FLOAT_NUM | STRING_VAL | TRUE_VAL | FALSE_VAL;
+constant: INT_VAL | FLOAT_VAL | STRING_VAL | TRUE_VAL | FALSE_VAL;
 
 /* Expression */
 
@@ -184,8 +210,8 @@ term:
         ;
 
 factor: 
-        NUMBER
-        | FLOAT_NUM
+        INT_VAL
+        | FLOAT_VAL
         | IDENTIFIER 
         | OPENBRACKET expression CLOSEDBRACKET
         ;
@@ -284,7 +310,7 @@ enum_statement: 		enum_declaration | enum_initialization {printf("Enum statement
 enum_initialization: 	        ENUM IDENTIFIER IDENTIFIER EQUAL IDENTIFIER SEMICOLON {printf("Enum initialization\n")};
 enum_declaration: 	        ENUM IDENTIFIER OPENCURL enum_list CLOSEDCURL SEMICOLON | ENUM IDENTIFIER SEMICOLON | CONST ENUM IDENTIFIER SEMICOLON {printf("Enum declaration\n")};
 enum_list:                      enum_val | ;
-enum_val:                       enum_val COMMA IDENTIFIER | enum_val COMMA IDENTIFIER EQUAL NUMBER |  IDENTIFIER EQUAL NUMBER |IDENTIFIER ;
+enum_val:                       enum_val COMMA IDENTIFIER | enum_val COMMA IDENTIFIER EQUAL INT_VAL |  IDENTIFIER EQUAL INT_VAL |IDENTIFIER ;
 
 /* Function Declaration */
 

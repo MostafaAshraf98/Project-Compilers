@@ -2,6 +2,8 @@ Old Projects/
 test.*
 .vscode
 Phase 1/
+!Classes.
+!SemanticAnalyzer.h
 !lexer.l
 !parser.y
 !make.bat

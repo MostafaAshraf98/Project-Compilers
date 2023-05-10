@@ -1,12 +1,15 @@
 %{
 #include<stdio.h>
 #include "parser.tab.h"
+#include "Classes.h"
 int yylineno = 1;
 void yyerror (char *s);
 int yylex();
 %}
 
 %%
+        /* EOF */
+"<<EOF>>"                       return EOF;
 
         /* Constant */
 "const"                         return CONST;
@@ -40,11 +43,26 @@ int yylex();
 "="				return EQUAL;
 
         /* Types */
-"int"                           return INT;  
-"float"                         return FLOAT;
-"char"                          return CHAR;
-"bool"                          return BOOL;
-"string"                        return STRING;
+"int"                           {
+                                    yylval.type = VariableType.INT;
+                                    return INT;  
+                                }
+"float"                         {
+                                    yylval.type = VariableType.FLOAT;
+                                    return FLOAT;  
+                                }
+"char"                          {
+                                    yylval.type = VariableType.CHAR;
+                                    return CHAR;  
+                                }
+"bool"                          {
+                                    yylval.type = VariableType.BOOL;
+                                    return BOOL;  
+                                }
+"string"                        {
+                                    yylval.type = VariableType.STRING;
+                                    return STRING;  
+                                }
 
 
         /* if then else statement */
@@ -82,13 +100,51 @@ int yylex();
 [\t\r ]+                        {;}
 ";"                             return SEMICOLON;
 
-        /* Identifier and Numbers */
-"true"                          return TRUE_VAL;
-"false"                         return FALSE_VAL;
-[a-zA-Z_][a-zA-Z0-9_]*          return IDENTIFIER;
-[0-9]+                          return NUMBER;
-[0-9]+\.[0-9]+                  return FLOAT_NUM;
-\"[^\"]*\"                      return STRING_VAL;
+        /* Identifier and Values */
+
+        /* TRUE VALUE*/
+"true"                          {
+                                    yylval.lexeme.boolVal = true;
+                                    yylval.lexeme.type = VariableType.BOOL;
+                                    return TRUE;
+                                }
+        /* FALSE VALUE*/
+"false"                          {
+                                    yylval.lexeme.boolVal = false;
+                                    yylval.lexeme.type = VariableType.BOOL;
+                                    return FALSE;
+                                }
+
+        /* INT VALUE*/
+[0-9]+                          { 
+                                    yylval.lexeme.intVal = atoi(yytext); 
+                                    yylval.lexeme.type = VariableType.INT;
+                                    return INT;                               
+                                }
+        /* FLOAT VALUE*/
+[0-9]+[\.][0-9]+                {
+                                    yylval.lexeme.floatVal = atof(yytext);
+                                    yylval.lexeme.type = VariableType.FLOAT;
+                                    return FLOAT;                                 
+                                } 
+
+        /* STRING VALUE   */
+["][a-zA-Z0-9]*["]              {   
+                                    yylval.lexeme.stringVal = strdup(yytext);
+                                    yylval.lexeme.type = VariableType.STRING;
+                                    return STRING;
+                                }
+        /* CHAR VALUE*/
+['][a-zA-Z0-9][']              {   
+                                    yylval.lexeme.charVal = yytext[1];
+                                    yylval.lexeme.type = VariableType.CHAR;
+                                    return CHAR;
+                                }
+        /* IDENTIFIER VALUE*/
+[a-zA-Z][_a-zA-Z0-9]*           {   
+                                    yylval.stringValue = strdup(yytext);                                       
+                                    return IDENTIFIER;
+                                }
 
 %%
 
