@@ -167,6 +167,6 @@ int yywrap(void)
 
 /* This is called by our parser whenever there is a syntactical error. In other words something that does not suit the grammar. */
 void yyerror (string s) {
-    fprintf(stderr, "\n ERROR LINE %d :\n %s \n", yylineno, s);
+    fprintf(stderr, "\n Syntax error LINE %d :\n %s \n", yylineno, s);
     exit(0);
 } 

@@ -374,27 +374,206 @@ arithmetic_expression:
         ;
 
 unary_expression:
-        IDENTIFIER INC 
-        | IDENTIFIER DEC 
+        IDENTIFIER INC
+        {
+                SymbolTableEntry* entry = getIdEntry($1);
+                if(entry == NULL){
+                        printSemanticError("Variable not declared at line number ",yylineno);
+                        return 0;
+                }
+                VariableType type = entry->lexeme->type;
+                if(type != INT_TYPE && type != FLOAT_TYPE)
+                {
+                        printSemanticError("Unary Operation should be on integer or float type at line number ",yylineno);
+                }else{
+                        Lexeme* lexeme = new Lexeme;
+                        lexeme -> stringRep = getCurrentCount();
+                        if(type == INT_TYPE)
+                        {
+                                lexeme->type = INT_TYPE;
+                                lexeme ->intVal = entry->lexeme->intVal + 1;
+                                entry->lexeme->intVal = lexeme->intVal;
+                        }else
+                        {
+                                lexeme->type = FLOAT_TYPE;
+                                lexeme ->floatVal = entry->lexeme->floatVal + 1;
+                                entry->lexeme->floatVal = lexeme->floatVal;
+                        }
+                        $$ = lexeme;
+                        char* temp = concatStrings(lexeme->stringRep,strdup(" := "));
+                        temp = concatStrings(temp,strdup(" INC "));
+                        temp = concatStrings(temp,$1);
+                        addIntermidiateRep(temp);
+                }
+        } 
+        | IDENTIFIER DEC
+        {
+                SymbolTableEntry* entry = getIdEntry($1);
+                if(entry == NULL){
+                        printSemanticError("Variable not declared at line number ",yylineno);
+                        return 0;
+                }
+                VariableType type = entry->lexeme->type;
+                if(type != INT_TYPE && type != FLOAT_TYPE)
+                {
+                        printSemanticError("Unary Operation should be on integer or float type at line number ",yylineno);
+                }else{
+                        Lexeme* lexeme = new Lexeme;
+                        lexeme -> stringRep = getCurrentCount();
+                        if(type == INT_TYPE)
+                        {
+                                lexeme->type = INT_TYPE;
+                                lexeme ->intVal = entry->lexeme->intVal -1 ;
+                                entry->lexeme->intVal = lexeme->intVal;
+                        }else
+                        {
+                                lexeme->type = FLOAT_TYPE;
+                                lexeme ->floatVal = entry->lexeme->floatVal - 1;
+                                entry->lexeme->floatVal = lexeme->floatVal;
+                        }
+                        $$ = lexeme;
+                        char* temp = concatStrings(lexeme->stringRep,strdup(" := "));
+                        temp = concatStrings(temp,strdup(" DEC "));
+                        temp = concatStrings(temp,$1);
+                        addIntermidiateRep(temp);
+                }
+        } 
         ;
 
 binary_expression:
-        binary_expression PLUS term 
+        binary_expression PLUS term
+        {
+                VariableType type1 = $1->type;
+                VariableType type2 = $3->type;
+                if((type1 != INT_TYPE && type1 != FLOAT_TYPE) || (type2 != INT_TYPE && type2 != FLOAT_TYPE))
+                {
+                        printSemanticError("Addition operation must be between 2 numbers at line number ",yylineno);
+                }else{
+                        Lexeme* lexeme = new Lexeme;
+                        lexeme -> stringRep = getCurrentCount();
+                        if(type1 == FLOAT_TYPE || type2 == FLOAT_TYPE)
+                        {
+                                lexeme->type = FLOAT_TYPE;
+                                lexeme ->floatVal = $1->floatVal + $3->floatVal;
+                        }
+                        else{
+                                lexeme->type = INT_TYPE;
+                                lexeme ->intVal = $1->intVal + $3->intVal;
+                        }
+                        $$ = lexeme;
+                        char* temp = concatStrings(lexeme->stringRep,strdup(" := "));
+                        temp = concatStrings(temp,$1->stringRep);
+                        temp = concatStrings(temp,strdup(" ADD "));
+                        temp = concatStrings(temp,$3->stringRep);
+                        addIntermidiateRep(temp);
+                }
+        } 
         | binary_expression MINUS term 
+        {
+                VariableType type1 = $1->type;
+                VariableType type2 = $3->type;
+                if((type1 != INT_TYPE && type1 != FLOAT_TYPE) || (type2 != INT_TYPE && type2 != FLOAT_TYPE))
+                {
+                        printSemanticError("Subtraction operation must be between 2 numbers at line number ",yylineno);
+                }else{
+                        Lexeme* lexeme = new Lexeme;
+                        lexeme -> stringRep = getCurrentCount();
+                        if(type1 == FLOAT_TYPE || type2 == FLOAT_TYPE)
+                        {
+                                lexeme->type = FLOAT_TYPE;
+                                lexeme ->floatVal = $1->floatVal - $3->floatVal;
+                        }
+                        else{
+                                lexeme->type = INT_TYPE;
+                                lexeme ->intVal = $1->intVal - $3->intVal;
+                        }
+                        $$ = lexeme;
+                        char* temp = concatStrings(lexeme->stringRep,strdup(" := "));
+                        temp = concatStrings(temp,$1->stringRep);
+                        temp = concatStrings(temp,strdup(" SUB "));
+                        temp = concatStrings(temp,$3->stringRep);
+                        addIntermidiateRep(temp);
+                }
+        } 
         | term
         ;
 
 term:
         factor 
-        | term MULT factor 
+        | term MULT factor
+        {
+                VariableType type1 = $1->type;
+                VariableType type2 = $3->type;
+                if((type1 != INT_TYPE && type1 != FLOAT_TYPE) || (type2 != INT_TYPE && type2 != FLOAT_TYPE))
+                {
+                        printSemanticError("Multiplication operation must be between 2 numbers at line number ",yylineno);
+                }else{
+                        Lexeme* lexeme = new Lexeme;
+                        lexeme -> stringRep = getCurrentCount();
+                        if(type1 == FLOAT_TYPE || type2 == FLOAT_TYPE)
+                        {
+                                lexeme->type = FLOAT_TYPE;
+                                lexeme ->floatVal = $1->floatVal * $3->floatVal;
+                        }
+                        else{
+                                lexeme->type = INT_TYPE;
+                                lexeme ->intVal = $1->intVal * $3->intVal;
+                        }
+                        $$ = lexeme;
+                        char* temp = concatStrings(lexeme->stringRep,strdup(" := "));
+                        temp = concatStrings(temp,$1->stringRep);
+                        temp = concatStrings(temp,strdup(" MUL "));
+                        temp = concatStrings(temp,$3->stringRep);
+                        addIntermidiateRep(temp);
+                }
+        } 
         | term DIV factor
+        {
+                VariableType type1 = $1->type;
+                VariableType type2 = $3->type;
+                if((type1 != INT_TYPE && type1 != FLOAT_TYPE) || (type2 != INT_TYPE && type2 != FLOAT_TYPE))
+                {
+                        printSemanticError("Division operation must be between 2 numbers at line number ",yylineno);
+                }else{
+                        Lexeme* lexeme = new Lexeme;
+                        lexeme -> stringRep = getCurrentCount();
+                        if(type1 == FLOAT_TYPE || type2 == FLOAT_TYPE)
+                        {
+                                lexeme->type = FLOAT_TYPE;
+                                lexeme ->floatVal = $1->floatVal / $3->floatVal;
+                        }
+                        else{
+                                lexeme->type = INT_TYPE;
+                                lexeme ->intVal = $1->intVal / $3->intVal;
+                        }
+                        $$ = lexeme;
+                        char* temp = concatStrings(lexeme->stringRep,strdup(" := "));
+                        temp = concatStrings(temp,$1->stringRep);
+                        temp = concatStrings(temp,strdup(" DIV "));
+                        temp = concatStrings(temp,$3->stringRep);
+                        addIntermidiateRep(temp);
+                }
+        } 
         ;
 
 factor: 
         INT_VAL
         | FLOAT_VAL
-        | IDENTIFIER 
+        | IDENTIFIER
+        {
+                SymbolTableEntry* entry = getIdEntry($1);
+                char* id = $1
+                if(entry == NULL){
+                        printSemanticError("Variable not declared at line number ",yylineno);
+                        return 0;
+                }
+                $$ = entry->lexeme;
+                $$->stringRep = id;
+        }  
         | OPENBRACKET expression CLOSEDBRACKET
+        {
+                $$ = $2;
+        }
         ;
                 
 
