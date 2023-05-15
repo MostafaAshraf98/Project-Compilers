@@ -103,6 +103,12 @@ char* concatStrings(char* str1, char* str2)
     return temp;
 }
 
+void checkIfLexemIsBool(Lexeme* lexeme, int lineNo)
+{
+    if(lexeme->type != BOOL_TYPE)
+        printSemanticError("Expected a boolean value", lineNo);
+}
+
 bool checkEQ_EQ(Lexeme* lex1, Lexeme* lex2){
     if(lex1->type==INT_TYPE ){
         return lex1->intVal==lex2->intVal;
