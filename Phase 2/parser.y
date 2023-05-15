@@ -599,6 +599,11 @@ assignment_statement:
                         printSemanticError("Undeclared Variable at line number ",yylineno);
                         return 0;
                 }
+                if(entry->kind != VAR)
+                {
+                        printSemanticError("Cannot assign value to a non variable type at line number ",yylineno);
+                        return 0;
+                }
                 VariableType type1 = entry->lexeme->type;
                 VariableType type2 = $3->type;
                 if(!isTypeMatching(type1,type2))
@@ -626,6 +631,11 @@ assignment_statement:
                 SymbolTableEntry* entry = getIdEntry($1);
                 if(entry == NULL){
                         printSemanticError("Undeclared Variable at line number ",yylineno);
+                        return 0;
+                }
+                if(entry->kind != VAR)
+                {
+                        printSemanticError("Cannot assign value to a non variable type at line number ",yylineno);
                         return 0;
                 }
                 if(entry->isInit == false)
@@ -664,6 +674,11 @@ assignment_statement:
                         printSemanticError("Undeclared Variable at line number ",yylineno);
                         return 0;
                 }
+                if(entry->kind != VAR)
+                {
+                        printSemanticError("Cannot assign value to a non variable type at line number ",yylineno);
+                        return 0;
+                }
                 if(entry->isInit == false)
                 {
                         printSemanticError("Variable not initialized at line number ",yylineno);
@@ -700,6 +715,11 @@ assignment_statement:
                         printSemanticError("Undeclared Variable at line number ",yylineno);
                         return 0;
                 }
+                if(entry->kind != VAR)
+                {
+                        printSemanticError("Cannot assign value to a non variable type at line number ",yylineno);
+                        return 0;
+                }
                 if(entry->isInit == false)
                 {
                         printSemanticError("Variable not initialized at line number ",yylineno);
@@ -734,6 +754,11 @@ assignment_statement:
                 SymbolTableEntry* entry = getIdEntry($1);
                 if(entry == NULL){
                         printSemanticError("Undeclared Variable at line number ",yylineno);
+                        return 0;
+                }
+                if(entry->kind != VAR)
+                {
+                        printSemanticError("Cannot assign value to a non variable type at line number ",yylineno);
                         return 0;
                 }
                 if(entry->isInit == false)
@@ -834,7 +859,37 @@ var_declaration:
          }
 
 constant_declaration: 	
-        CONST type IDENTIFIER EQUAL value SEMICOLON  {printf("Constant declaration\n");};
+        CONST type IDENTIFIER EQUAL value SEMICOLON  
+        {
+                SymbolTableEntry* entry = getIdEntry($3);
+                if(entry != NULL){
+                        printSemanticError("Variable already declared at line number ",yylineno);
+                        return 0;
+                }
+                VariableType type1 = $2;
+                VariableType type2 = $5->type;
+                if(!isTypeMatching(type1,type2))
+                {
+                        printSemanticError("Type mismatch in variable declaration at line number ",yylineno);
+                }else{
+                        Lexeme* lexeme = new Lexeme;
+                        lexeme->type = type1;
+                        lexeme -> stringRep = getCurrentCount();
+                        if(type1 == INT_TYPE && type2 == FLOAT_TYPE)
+                        {
+                                lexeme->intVal = (int)$5->floatVal;
+                        }else if (type1 == FLOAT_TYPE && type2 == INT_TYPE)
+                        {
+                                lexeme->floatVal = (float)$5->intVal;
+                        }else{
+                                lexeme = $5;
+                        }
+                        char* temp = concatStrings($3,strdup(" := "));
+                        temp = concatStrings(temp,$5->stringRep);
+                        addIntermidiateRep(temp);
+                        addEntryToTable($3,lexeme,CONSTANT,true);
+                }        
+        };
 
 /* If statement */
 
