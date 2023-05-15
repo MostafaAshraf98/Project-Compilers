@@ -894,7 +894,7 @@ constant_declaration:
 /* If statement */
 
 if_statement: 
-        IF OPENBRACKET value { checkIfLexemIsBool($3,yylineno)}  CLOSEDBRACKET OPENCURL {createNewTable()} statements CLOSEDCURL{exitCurrentScope()} else_if_statement else_statement  {printf("If then statement\n");}
+        IF OPENBRACKET value { checkIfLexemIsBool($3,yylineno)}  CLOSEDBRACKET OPENCURL {createNewTable()} statements CLOSEDCURL {exitCurrentScope()} else_if_statement else_statement  {printf("If then statement\n");}
 	;
 
 else_statement: 
@@ -902,19 +902,20 @@ else_statement:
         |
         ;
 else_if_statement:
-        else_if_statement ELSEIF OPENBRACKET  value { checkIfLexemIsBool($4,yylineno)} CLOSEDBRACKET OPENCURL {createNewTable()} statements CLOSEDCURL {exitCurrentScope()} | 
+        else_if_statement ELSEIF OPENBRACKET  value { checkIfLexemIsBool($4,yylineno)} CLOSEDBRACKET OPENCURL {createNewTable()} statements CLOSEDCURL {exitCurrentScope()} 
+        | 
         ;
 
 /* While statement */
 
 while_statement:
-		WHILE OPENBRACKET value CLOSEDBRACKET statement   {printf("while loop\n");}
+		WHILE  OPENBRACKET value { checkIfLexemIsBool($3,yylineno)} CLOSEDBRACKET statement   {printf("while loop\n");}
 		;
 
 /* Do while statement */
 
 do_while_statement:
-	DO statement WHILE OPENBRACKET value CLOSEDBRACKET SEMICOLON  {printf("do-while loop\n");}
+	DO statement WHILE OPENBRACKET value { checkIfLexemIsBool($5,yylineno)} CLOSEDBRACKET SEMICOLON  {printf("do-while loop\n");}
 	;
 
 /* For statement */
