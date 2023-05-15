@@ -77,8 +77,6 @@ int yylex();
 "switch"                        return SWITCH;
 "case"                          return CASE;
 "default"                       return DEFAULT;
-"break"                         return BREAK;
-"continue"                      return CONTINUE;
 
         /* Functions */
 "void"                          return VOID; 

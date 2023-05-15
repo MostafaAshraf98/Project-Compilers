@@ -104,8 +104,6 @@ char* stringValue;
 %token SWITCH
 %token CASE
 %token DEFAULT
-%token BREAK
-%token CONTINUE
 
         /* Functions */
 %token VOID 
@@ -155,9 +153,7 @@ statement :
 	| while_statement                   
 	| do_while_statement                
 	| for_statement                     
-        | switch_statement 
-        | break_statement 
-        | continue_statement 
+        | switch_statement
 	| function							
 	| OPENCURL {createNewTable();} statements CLOSEDCURL {exitCurrentScope();}
 	| RETURN return_value SEMICOLON         {printf("Return statement\n")}
@@ -956,11 +952,6 @@ case_statement:
     CASE value COLON statements 
     | DEFAULT COLON statements
     ;
-
-/* Break or Continue */
-
-break_statement: BREAK SEMICOLON {printf("Break statement\n")};
-continue_statement: CONTINUE SEMICOLON {printf("Continue statement\n")};
 
 /* Enums */
 
