@@ -944,7 +944,7 @@ for_expression:
 /* Switch statement */
 
 switch_statement:
-    SWITCH OPENBRACKET value CLOSEDBRACKET OPENCURL case_list CLOSEDCURL {printf("switch case\n");}
+    SWITCH OPENBRACKET value CLOSEDBRACKET OPENCURL {createNewTable()}  case_list CLOSEDCURL {exitCurrentScope()} {printf("switch case\n");}
     ;
 
 case_list:
