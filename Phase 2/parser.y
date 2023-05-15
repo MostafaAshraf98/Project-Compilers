@@ -27,7 +27,6 @@ char* stringValue;
 %type<lexeme> binary_expression
 %type<lexeme> term
 %type<lexeme> factor
-%type<lexeme> for_expression
 %type<lexeme> return_value
 %type<lexeme> function_call
 
@@ -921,7 +920,7 @@ do_while_statement:
 /* For statement */
 
 for_statement:
-	FOR OPENBRACKET for_initialization value SEMICOLON for_expression CLOSEDBRACKET statement {printf("for loop\n");}
+	FOR {createNewTable()} OPENBRACKET for_initialization value { checkIfLexemIsBool($5,yylineno)} SEMICOLON for_expression CLOSEDBRACKET OPENCURL statements CLOSEDCURL {exitCurrentScope()} {printf("for loop\n");}
 	;
 
 for_initialization:
