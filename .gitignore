@@ -2,9 +2,16 @@ Old Projects/
 test.*
 .vscode
 Phase 1/
-!Classes.
-!SemanticAnalyzer.h
 !lexer.l
 !parser.y
-!make.bat
-!delete.bat
+
+lexer.cpp
+parser.cpp
+parser.hpp
+parser.output
+program.exe
+lex.yy.cc
+lex.yy.cpp
+parser.tab.cpp
+parser.tab.hpp
+stack.hh

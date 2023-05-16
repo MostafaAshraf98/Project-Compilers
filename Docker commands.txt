@@ -1,0 +1,9 @@
+docker build -t compilers_image .
+
+docker container run --name compilers -v "D:\Work\CCE\Year 4 - Senior 2\Semester 2\Compilers\Project\Project-Compilers\Phase 2":/files -it compilers_image bash
+
+docker container start compilers
+
+docker container exec -it compilers bash
+
+cd files
