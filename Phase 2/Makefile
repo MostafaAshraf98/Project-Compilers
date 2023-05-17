@@ -6,7 +6,7 @@ lexer.cpp: lexer.l
 	flex++ -o lexer.cpp lexer.l
 
 parser.cpp: parser.y
-	bison --language=C++ -d -v -o parser.cpp parser.y
+	bison --language=C++ -d -o parser.cpp parser.y
 
 program.exe: lexer.cpp parser.cpp
 	g++ -o program.exe lexer.cpp parser.cpp
