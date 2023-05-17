@@ -957,9 +957,47 @@ case_statement:
 /* Enums */
 
 enum_statement: 		enum_declaration | enum_initialization
-enum_initialization: 	        ENUM IDENTIFIER IDENTIFIER EQUAL IDENTIFIER SEMICOLON
-enum_declaration: 	        ENUM IDENTIFIER OPENCURL enum_list CLOSEDCURL SEMICOLON | ENUM IDENTIFIER SEMICOLON
-enum_list:                      enum_list COMMA IDENTIFIER |IDENTIFIER  ;
+enum_initialization: 	        
+        ENUM IDENTIFIER IDENTIFIER EQUAL IDENTIFIER SEMICOLON
+        {
+                SymbolTableEntry* pointerToEnum = getIdEntry($2);
+                SymbolTableEntry* entry = getIdEntry($3);
+                if(pointerToEnum == NULL){
+                        printSemanticError("Enumerator not declared at line number ",yylineno);
+                        return 0;
+                }
+                if(entry != NULL){
+                        printSemanticError("Variable already declared at line number ",yylineno);
+                        return 0;
+                }
+                if(pointerToEnum->lexeme->kind != ENUMERATOR)
+                {
+                        printSemanticError("Variable is not of enum type at line number ",yylineno);
+                        return 0;
+                }
+                if(idExistsInEnum(pointerToEnum,$5) == false)
+                {
+                        printSemanticError("Enumerator does not contain this value at line number ",yylineno);
+                        return 0;
+                }
+                LexemeEntry* lexeme = new LexemeEntry;
+                lexeme->type = ENUM_TYPE;
+                lexeme->stringRep = getCurrentCount();
+                lexeme->stringVal = $5;
+                addEntryToTable($3,lexeme,VAR,true,pointerToEnum);
+        }
+
+enum_declaration: 	        
+        ENUM IDENTIFIER OPENCURL enum_list CLOSEDCURL SEMICOLON 
+        {
+
+        }
+        | ENUM IDENTIFIER SEMICOLON
+        {
+
+        }
+enum_list:                      
+        enum_list COMMA IDENTIFIER |IDENTIFIER  ;
 
 /* Function Declaration */
 
@@ -970,7 +1008,7 @@ return_value:
         {
           $$ = $1.type;
         }
-         | 
+        | 
         {
           $$ = VOID_TYPE;
         };
@@ -1033,7 +1071,7 @@ function_prototype:
         } CLOSEDBRACKET
     ;
 
-parameters: 			parameters COMMA single_parameter | single_parameter ;
+parameters: 	parameters COMMA single_parameter | single_parameter ;
 
 single_parameter: 		
         type IDENTIFIER

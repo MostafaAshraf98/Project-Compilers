@@ -20,6 +20,7 @@ enum Kind{
     CONSTANT,
     VAR,
     FUNC,
+    ENUMERATOR,
     PARAM
 };
 
@@ -41,6 +42,7 @@ class SymbolTableEntry{
         bool isUsed = false;
         VariableType functionOutput;
         SymbolTableEntry* pointerToEnum = NULL;
+        vector<char*> enumValues;
 };
 
 class SymbolTable

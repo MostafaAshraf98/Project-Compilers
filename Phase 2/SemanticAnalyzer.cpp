@@ -33,6 +33,18 @@ bool addEntryToTable(char *identifier, LexemeEntry *lexeme, Kind kind, bool isIn
     return true;
 }
 
+bool idExistsInEnum(SymbolTableEntry* pointerToEnum, char* identifier)
+{
+    for(int i=0;i<pointerToEnum->enumValues.size();i++)
+    {
+        if(strcmp(pointerToEnum->enumValues[i],identifier)==0)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 SymbolTableEntry *getIdEntry(char *identifier)
 {
     unordered_map<char *, SymbolTableEntry *> map = currentSymbolTable->entries;
