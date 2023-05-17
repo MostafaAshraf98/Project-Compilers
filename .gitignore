@@ -13,3 +13,7 @@ parser.cpp
 parser.hpp
 parser.output
 program.exe
+quadruple.txt
+semantic-error.txt
+syntax-error.txt
+symbol-tables.txt

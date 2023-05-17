@@ -4,6 +4,7 @@
 #include "parser.h"
 // int yylineno = 1;
 // void yyerror (char *s);
+extern void printSyntaxError(string s, int lineNum);
 int yylex();
 %}
 
@@ -165,6 +166,6 @@ int yywrap(void)
 
 /* This is called by our parser whenever there is a syntactical error. In other words something that does not suit the grammar. */
 void yyerror (string s) {
-    fprintf(stderr, "\n Syntax error LINE %d :\n %s \n", yylineno, s.c_str());
+    printSyntaxError(s,yylineno);
     exit(0);
 } 

@@ -1167,9 +1167,7 @@ int main (void)
         fclose(testFile);
         printf("\n\n====== Parsing =====\n\n");
         int result = yyparse();
-
-        printf("\n=================\n");
-
+        printSymbolTables();
         if (result == 0) {
             printf("Parsing Successful\n");
         }

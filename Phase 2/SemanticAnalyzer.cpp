@@ -4,12 +4,18 @@
 #include "Classes.hpp"
 #include <string>
 #include <cstring>
+#include <iostream>
+#include <fstream>
+#include <iomanip>
 using namespace std;
 
 SymbolTable *currentSymbolTable;
+SymbolTable *rootSymbolTable;
 
-FILE *semanticFile = fopen("semantic.txt", "w");
+FILE *semanticFile = fopen("semantic-error.txt", "w");
 FILE *quadrupleFile = fopen("quadruple.txt", "w");
+FILE *syntaxFile = fopen("syntax-error.txt", "w");
+ofstream symbolTablesFile("symbol-tables.txt");
 
 int currentCount = 0;
 
@@ -20,6 +26,7 @@ void Init()
     vector<SymbolTable *> children;
     currentSymbolTable->children = children;
     currentSymbolTable->entries = map;
+    rootSymbolTable = currentSymbolTable;
 }
 
 void createNewTable()
@@ -29,7 +36,7 @@ void createNewTable()
     vector<SymbolTable *> children;
     currentSymbolTable->children = children;
     newSymbolTable->entries = map;
-    
+
     newSymbolTable->parent = currentSymbolTable;
     currentSymbolTable->children.push_back(newSymbolTable);
     currentSymbolTable = newSymbolTable;
@@ -48,11 +55,11 @@ bool addEntryToTable(char *identifier, LexemeEntry *lexeme, Kind kind, bool isIn
     return true;
 }
 
-bool idExistsInEnum(SymbolTableEntry* pointerToEnum, char* identifier)
+bool idExistsInEnum(SymbolTableEntry *pointerToEnum, char *identifier)
 {
-    for(int i=0;i<pointerToEnum->enumValues.size();i++)
+    for (int i = 0; i < pointerToEnum->enumValues.size(); i++)
     {
-        if(strcmp(pointerToEnum->enumValues[i],identifier)==0)
+        if (strcmp(pointerToEnum->enumValues[i], identifier) == 0)
         {
             return true;
         }
@@ -102,9 +109,104 @@ bool isTypeMatching(int type1, int type2)
     return false;
 }
 
+void traverseSymbolTable(SymbolTable *table, int level, ofstream &outputFile)
+{
+    outputFile << std::setw(level * 4) << ""
+               << "Identifier"
+               << std::setw(12) << "Level"
+               << std::setw(12) << "Kind"
+               << std::setw(12) << "Type" << std::endl;
+    outputFile << std::setw(level * 4) << ""
+               << "----------"
+               << std::setw(12) << "-----"
+               << std::setw(12) << "----"
+               << std::setw(12) << "----" << std::endl;
+
+    // Print table entries
+    for (const auto &entry : table->entries)
+    {
+        SymbolTableEntry *symbolEntry = entry.second;
+        LexemeEntry *lexeme = symbolEntry->lexeme;
+
+        // Print entry values
+        outputFile << std::setw(level * 4) << "" << entry.first
+                   << std::setw(18) << level;
+        switch (symbolEntry->kind)
+        {
+        case CONSTANT:
+            outputFile << std::setw(14) << "CONSTANT";
+            break;
+        case VAR:
+            outputFile << std::setw(14) << "VAR";
+            break;
+        case FUNC:
+            outputFile << std::setw(14) << "FUNC";
+            break;
+        case ENUMERATOR:
+            outputFile << std::setw(14) << "ENUMERATOR";
+            break;
+        case PARAM:
+            outputFile << std::setw(14) << "PARAM";
+            break;
+        }
+        switch (lexeme->type)
+        {
+        case INT_TYPE:
+            outputFile << std::setw(16) << "INT_TYPE";
+            break;
+        case FLOAT_TYPE:
+            outputFile << std::setw(16) << "FLOAT_TYPE";
+            break;
+        case STRING_TYPE:
+            outputFile << std::setw(16) << "STRING_TYPE";
+            break;
+        case BOOL_TYPE:
+            outputFile << std::setw(16) << "BOOL_TYPE";
+            break;
+        case CHAR_TYPE:
+            outputFile << std::setw(16) << "CHAR_TYPE";
+            break;
+        case VOID_TYPE:
+            outputFile << std::setw(16) << "VOID_TYPE";
+            break;
+        case ENUM_TYPE:
+            outputFile << std::setw(16) << "ENUM_TYPE";
+            break;
+        }
+        outputFile << std::endl;
+    }
+
+    outputFile << std::endl;
+
+    // Recursively traverse child symbol tables
+    for (SymbolTable *child : table->children)
+    {
+        traverseSymbolTable(child, level + 1, outputFile);
+    }
+}
+
+void printSymbolTables()
+{
+    traverseSymbolTable(rootSymbolTable, 0, symbolTablesFile);
+    symbolTablesFile.close();
+    fclose(semanticFile);
+    fclose(quadrupleFile);
+    fclose(syntaxFile);
+}
+
 void printSemanticError(string error, int lineNo)
 {
     fprintf(semanticFile, "%s At Line Number %d\n", error.c_str(), lineNo);
+    printf("There are semantic errors\n");
+    printSymbolTables();
+    exit(0);
+}
+
+void printSyntaxError(string error, int lineNo)
+{
+    fprintf(syntaxFile, "%s At Line Number %d\n", error.c_str(), lineNo);
+    printf("There are syntax errors\n");
+    printSymbolTables();
     exit(0);
 }
 
