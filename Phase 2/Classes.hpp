@@ -23,7 +23,7 @@ enum Kind{
     PARAM
 };
 
-struct Lexeme{
+struct LexemeEntry{
         VariableType type;
         char *stringRep;
         int intVal;
@@ -36,7 +36,7 @@ struct Lexeme{
 
 class SymbolTableEntry{
     public:
-        Lexeme* lexeme;
+        LexemeEntry* lexeme;
         Kind kind;
         bool isInit = false;
         bool isUsed = false;

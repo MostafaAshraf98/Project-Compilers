@@ -102,50 +102,50 @@ int yylex();
 
         /* TRUE VALUE*/
 "true"                          {
-                                    yylval.lexeme->boolVal = true;
-                                    yylval.lexeme->type = BOOL_TYPE;
-                                    yylval.lexeme->stringRep = strdup(yytext);
+                                    yylval.lexeme.boolVal = true;
+                                    yylval.lexeme.type = BOOL_TYPE;
+                                    yylval.lexeme.stringRep = strdup(yytext);
                                     return TRUE_VAL;
                                 }
         /* FALSE VALUE*/
 "false"                          {
-                                    yylval.lexeme->boolVal = false;
-                                    yylval.lexeme->type = BOOL_TYPE;
-                                    yylval.lexeme->stringRep = strdup(yytext);
+                                    yylval.lexeme.boolVal = false;
+                                    yylval.lexeme.type = BOOL_TYPE;
+                                    yylval.lexeme.stringRep = strdup(yytext);
 
                                     return FALSE_VAL;
                                 }
 
         /* INT VALUE*/
 [0-9]+                          { 
-                                    yylval.lexeme->intVal = atoi(yytext); 
-                                    yylval.lexeme->type = INT_TYPE;
-                                    yylval.lexeme->stringRep = strdup(yytext);
+                                    yylval.lexeme.intVal = atoi(yytext); 
+                                    yylval.lexeme.type = INT_TYPE;
+                                    yylval.lexeme.stringRep = strdup(yytext);
 
                                     return INT;                               
                                 }
         /* FLOAT VALUE*/
 [0-9]+[\.][0-9]+                {
-                                    yylval.lexeme->floatVal = atof(yytext);
-                                    yylval.lexeme->type = FLOAT_TYPE;
-                                    yylval.lexeme->stringRep = strdup(yytext);
+                                    yylval.lexeme.floatVal = atof(yytext);
+                                    yylval.lexeme.type = FLOAT_TYPE;
+                                    yylval.lexeme.stringRep = strdup(yytext);
 
                                     return FLOAT;                                 
                                 } 
 
         /* STRING VALUE   */
 ["][a-zA-Z0-9]*["]              {   
-                                    yylval.lexeme->stringVal = strdup(yytext);
-                                    yylval.lexeme->type = STRING_TYPE;
-                                    yylval.lexeme->stringRep = strdup(yytext);
+                                    yylval.lexeme.stringVal = strdup(yytext);
+                                    yylval.lexeme.type = STRING_TYPE;
+                                    yylval.lexeme.stringRep = strdup(yytext);
 
                                     return STRING;
                                 }
         /* CHAR VALUE*/
 ['][a-zA-Z0-9][']              {   
-                                    yylval.lexeme->charVal = yytext[1];
-                                    yylval.lexeme->type = CHAR_TYPE;
-                                    yylval.lexeme->stringRep = strdup(yytext);
+                                    yylval.lexeme.charVal = yytext[1];
+                                    yylval.lexeme.type = CHAR_TYPE;
+                                    yylval.lexeme.stringRep = strdup(yytext);
 
                                     return CHAR;
                                 }

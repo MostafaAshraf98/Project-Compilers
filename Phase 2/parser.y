@@ -11,9 +11,18 @@
 
         /* Union */
 %union {
-VariableType varType;
-Lexeme* lexeme;
-char* stringValue;
+        int varType;
+        struct Lexeme{
+                int type;
+                char *stringRep;
+                int intVal;
+                float floatVal;
+                char* stringVal;
+                bool boolVal;
+                char charVal;
+        }lexeme;
+
+        char* stringValue;
 };
 
         /* Rules types */
@@ -180,180 +189,173 @@ expression:
 boolean_expression:
         expression EQ_EQ arithmetic_expression
         {
-                VariableType type1 = $1->type;
-                VariableType type2 = $3->type;
+                int type1 = $1.type;
+                int type2 = $3.type;
                 if(!isTypeMatching(type1,type2))
                 {
                         printSemanticError("Type mismatch in boolean expression at line number ",yylineno);
                 }else{
-                        Lexeme* lexeme = new Lexeme;
-                        lexeme->type = BOOL_TYPE;
-                        lexeme -> stringRep = getCurrentCount();
-                        lexeme ->boolVal = checkEQ_EQ($1,$3);
-                        $$ = lexeme;
-                        char* temp = concatStrings(lexeme->stringRep,strdup(" := "));
-                        temp = concatStrings(temp,$1->stringRep);
+                        $$.type = BOOL_TYPE;
+                        $$.stringRep = getCurrentCount();
+                        LexemeEntry* lex1 = convertLexemeToEntry($1.type, $1.stringRep, $1.intVal, $1.floatVal, $1.stringVal, $1.boolVal, $1.charVal);
+                        LexemeEntry* lex2 = convertLexemeToEntry($3.type, $3.stringRep, $3.intVal, $3.floatVal, $3.stringVal, $3.boolVal, $3.charVal);
+                        $$.boolVal = checkEQ_EQ(lex1,lex2);
+                        char* temp = concatStrings($$.stringRep,strdup(" := "));
+                        temp = concatStrings(temp,$1.stringRep);
                         temp = concatStrings(temp,strdup(" == "));
-                        temp = concatStrings(temp,$3->stringRep);
+                        temp = concatStrings(temp,$3.stringRep);
                         addIntermidiateRep(temp);
                 }
         }
         | expression NE arithmetic_expression 
         {
-                VariableType type1 = $1->type;
-                VariableType type2 = $3->type;
+                int type1 = $1.type;
+                int type2 = $3.type;
                 if(!isTypeMatching(type1,type2))
                 {
                         printSemanticError("Type mismatch in boolean expression at line number ",yylineno);
                 }else{
-                        Lexeme* lexeme = new Lexeme;
-                        lexeme->type = BOOL_TYPE;
-                        lexeme -> stringRep = getCurrentCount();
-                        lexeme ->boolVal = checkNE($1,$3);
-                        $$ = lexeme;
-                        char* temp = concatStrings(lexeme->stringRep,strdup(" := "));
-                        temp = concatStrings(temp,$1->stringRep);
+                        $$.type = BOOL_TYPE;
+                        $$.stringRep = getCurrentCount();
+                        LexemeEntry* lex1 = convertLexemeToEntry($1.type, $1.stringRep, $1.intVal, $1.floatVal, $1.stringVal, $1.boolVal, $1.charVal);
+                        LexemeEntry* lex2 = convertLexemeToEntry($3.type, $3.stringRep, $3.intVal, $3.floatVal, $3.stringVal, $3.boolVal, $3.charVal);
+                        $$.boolVal = checkNE(lex1,lex2);
+                        char* temp = concatStrings($$.stringRep,strdup(" := "));
+                        temp = concatStrings(temp,$1.stringRep);
                         temp = concatStrings(temp,strdup(" != "));
-                        temp = concatStrings(temp,$3->stringRep);
+                        temp = concatStrings(temp,$3.stringRep);
                         addIntermidiateRep(temp);
                 }
         }
         | expression GE arithmetic_expression
         {
-                VariableType type1 = $1->type;
-                VariableType type2 = $3->type;
+                int type1 = $1.type;
+                int type2 = $3.type;
                 if(!isTypeMatching(type1,type2))
                 {
                         printSemanticError("Type mismatch in boolean expression at line number ",yylineno);
                 }else{
-                        Lexeme* lexeme = new Lexeme;
-                        lexeme->type = BOOL_TYPE;
-                        lexeme -> stringRep = getCurrentCount();
-                        lexeme ->boolVal = checkGE($1,$3);
-                        $$ = lexeme;
-                        char* temp = concatStrings(lexeme->stringRep,strdup(" := "));
-                        temp = concatStrings(temp,$1->stringRep);
+                        $$.type = BOOL_TYPE;
+                        $$.stringRep = getCurrentCount();
+                        LexemeEntry* lex1 = convertLexemeToEntry($1.type, $1.stringRep, $1.intVal, $1.floatVal, $1.stringVal, $1.boolVal, $1.charVal);
+                        LexemeEntry* lex2 = convertLexemeToEntry($3.type, $3.stringRep, $3.intVal, $3.floatVal, $3.stringVal, $3.boolVal, $3.charVal);
+                        $$.boolVal = checkGE(lex1,lex2);
+                        char* temp = concatStrings($$.stringRep,strdup(" := "));
+                        temp = concatStrings(temp,$1.stringRep);
                         temp = concatStrings(temp,strdup(" >= "));
-                        temp = concatStrings(temp,$3->stringRep);
+                        temp = concatStrings(temp,$3.stringRep);
                         addIntermidiateRep(temp);
                 }
         } 
         | expression LE arithmetic_expression
         {
-                VariableType type1 = $1->type;
-                VariableType type2 = $3->type;
+                int type1 = $1.type;
+                int type2 = $3.type;
                 if(!isTypeMatching(type1,type2))
                 {
                         printSemanticError("Type mismatch in boolean expression at line number ",yylineno);
                 }else{
-                        Lexeme* lexeme = new Lexeme;
-                        lexeme->type = BOOL_TYPE;
-                        lexeme -> stringRep = getCurrentCount();
-                        lexeme ->boolVal = checkNE($1,$3);
-                        $$ = lexeme;
-                        char* temp = concatStrings(lexeme->stringRep,strdup(" := "));
-                        temp = concatStrings(temp,$1->stringRep);
+                        $$.type = BOOL_TYPE;
+                        $$.stringRep = getCurrentCount();
+                        LexemeEntry* lex1 = convertLexemeToEntry($1.type, $1.stringRep, $1.intVal, $1.floatVal, $1.stringVal, $1.boolVal, $1.charVal);
+                        LexemeEntry* lex2 = convertLexemeToEntry($3.type, $3.stringRep, $3.intVal, $3.floatVal, $3.stringVal, $3.boolVal, $3.charVal);
+                        $$.boolVal = checkNE(lex1,lex2);
+                        char* temp = concatStrings($$.stringRep,strdup(" := "));
+                        temp = concatStrings(temp,$1.stringRep);
                         temp = concatStrings(temp,strdup(" <= "));
-                        temp = concatStrings(temp,$3->stringRep);
+                        temp = concatStrings(temp,$3.stringRep);
                         addIntermidiateRep(temp);
                 }
         } 
         | expression GT arithmetic_expression
         {
-                VariableType type1 = $1->type;
-                VariableType type2 = $3->type;
+                int type1 = $1.type;
+                int type2 = $3.type;
                 if(!isTypeMatching(type1,type2))
                 {
                         printSemanticError("Type mismatch in boolean expression at line number ",yylineno);
                 }else{
-                        Lexeme* lexeme = new Lexeme;
-                        lexeme->type = BOOL_TYPE;
-                        lexeme -> stringRep = getCurrentCount();
-                        $$ = lexeme;
-                        lexeme ->boolVal = checkGT($1,$3);
-                        $$ = lexeme;
-                        char* temp = concatStrings(lexeme->stringRep,strdup(" := "));
-                        temp = concatStrings(temp,$1->stringRep);
+                        $$.type = BOOL_TYPE;
+                        $$.stringRep = getCurrentCount();
+                        LexemeEntry* lex1 = convertLexemeToEntry($1.type, $1.stringRep, $1.intVal, $1.floatVal, $1.stringVal, $1.boolVal, $1.charVal);
+                        LexemeEntry* lex2 = convertLexemeToEntry($3.type, $3.stringRep, $3.intVal, $3.floatVal, $3.stringVal, $3.boolVal, $3.charVal);
+                        $$.boolVal = checkGT(lex1,lex2);
+                        char* temp = concatStrings($$.stringRep,strdup(" := "));
+                        temp = concatStrings(temp,$1.stringRep);
                         temp = concatStrings(temp,strdup(" > "));
-                        temp = concatStrings(temp,$3->stringRep);
+                        temp = concatStrings(temp,$3.stringRep);
                         addIntermidiateRep(temp);
                 }
         }
         | expression LT arithmetic_expression 
         {
-                VariableType type1 = $1->type;
-                VariableType type2 = $3->type;
+                int type1 = $1.type;
+                int type2 = $3.type;
                 if(!isTypeMatching(type1,type2))
                 {
                         printSemanticError("Type mismatch in boolean expression at line number ",yylineno);
                 }else{
-                        Lexeme* lexeme = new Lexeme;
-                        lexeme->type = BOOL_TYPE;
-                        lexeme -> stringRep = getCurrentCount();
-                        lexeme ->boolVal = checkLT($1,$3);
-                        $$ = lexeme;
-                        char* temp = concatStrings(lexeme->stringRep,strdup(" := "));
-                        temp = concatStrings(temp,$1->stringRep);
+                        $$.type = BOOL_TYPE;
+                        $$.stringRep = getCurrentCount();
+                        LexemeEntry* lex1 = convertLexemeToEntry($1.type, $1.stringRep, $1.intVal, $1.floatVal, $1.stringVal, $1.boolVal, $1.charVal);
+                        LexemeEntry* lex2 = convertLexemeToEntry($3.type, $3.stringRep, $3.intVal, $3.floatVal, $3.stringVal, $3.boolVal, $3.charVal);
+                        $$.boolVal = checkLT(lex1,lex2);
+                        char* temp = concatStrings($$.stringRep,strdup(" := "));
+                        temp = concatStrings(temp,$1.stringRep);
                         temp = concatStrings(temp,strdup(" < "));
-                        temp = concatStrings(temp,$3->stringRep);
+                        temp = concatStrings(temp,$3.stringRep);
                         addIntermidiateRep(temp);
                 }
         }
         | expression AND arithmetic_expression
         {
-                VariableType type1 = $1->type;
-                VariableType type2 = $3->type;
+                int type1 = $1.type;
+                int type2 = $3.type;
                 if(type1 != BOOL_TYPE || type2 != BOOL_TYPE)
                 {
                         printSemanticError("AND Operation should be between boolean types at line number ",yylineno);
                 }else{
-                        Lexeme* lexeme = new Lexeme;
-                        lexeme->type = BOOL_TYPE;
-                        lexeme -> stringRep = getCurrentCount();
-                        lexeme ->boolVal = $1->boolVal && $3->boolVal;
-                        $$ = lexeme;
-                        char* temp = concatStrings(lexeme->stringRep,strdup(" := "));
-                        temp = concatStrings(temp,$1->stringRep);
+                        $$.type = BOOL_TYPE;
+                        $$.stringRep = getCurrentCount();
+                        $$.boolVal = $1.boolVal && $3.boolVal;
+                        char* temp = concatStrings($$.stringRep,strdup(" := "));
+                        temp = concatStrings(temp,$1.stringRep);
                         temp = concatStrings(temp,strdup(" AND "));
-                        temp = concatStrings(temp,$3->stringRep);
+                        temp = concatStrings(temp,$3.stringRep);
                         addIntermidiateRep(temp);
                 }
         } 
         | expression OR arithmetic_expression
         {
-                VariableType type1 = $1->type;
-                VariableType type2 = $3->type;
+                int type1 = $1.type;
+                int type2 = $3.type;
                 if(type1 != BOOL_TYPE || type2 != BOOL_TYPE)
                 {
                         printSemanticError("OR Operation should be between boolean types at line number ",yylineno);
                 }else{
-                        Lexeme* lexeme = new Lexeme;
-                        lexeme->type = BOOL_TYPE;
-                        lexeme -> stringRep = getCurrentCount();
-                        lexeme ->boolVal = $1->boolVal || $3->boolVal;
-                        $$ = lexeme;
-                        char* temp = concatStrings(lexeme->stringRep,strdup(" := "));
-                        temp = concatStrings(temp,$1->stringRep);
+                        $$.type = BOOL_TYPE;
+                        $$.stringRep = getCurrentCount();
+                        $$.boolVal = $1.boolVal || $3.boolVal;
+                        char* temp = concatStrings($$.stringRep,strdup(" := "));
+                        temp = concatStrings(temp,$1.stringRep);
                         temp = concatStrings(temp,strdup(" AND "));
-                        temp = concatStrings(temp,$3->stringRep);
+                        temp = concatStrings(temp,$3.stringRep);
                         addIntermidiateRep(temp);
                 }
         } 
         | NOT expression
         {
-                VariableType type = $2->type;
+                int type = $2.type;
                 if(type != BOOL_TYPE)
                 {
                         printSemanticError("NOT Operation should be on boolean type at line number ",yylineno);
                 }else{
-                        Lexeme* lexeme = new Lexeme;
-                        lexeme->type = BOOL_TYPE;
-                        lexeme -> stringRep = getCurrentCount();
-                        lexeme ->boolVal = !$2->boolVal;
-                        $$ = lexeme;
-                        char* temp = concatStrings(lexeme->stringRep,strdup(" := "));
+                        $$.type = BOOL_TYPE;
+                        $$.stringRep = getCurrentCount();
+                        $$.boolVal = !$2.boolVal;
+                        char* temp = concatStrings($$.stringRep,strdup(" := "));
                         temp = concatStrings(temp,strdup(" NOT "));
-                        temp = concatStrings(temp,$2->stringRep);
+                        temp = concatStrings(temp,$2.stringRep);
                         addIntermidiateRep(temp);
                 }
         } 
@@ -386,21 +388,19 @@ unary_expression:
                 {
                         printSemanticError("Unary Operation should be on integer or float type at line number ",yylineno);
                 }else{
-                        Lexeme* lexeme = new Lexeme;
-                        lexeme -> stringRep = getCurrentCount();
+                        $$.stringRep = getCurrentCount();
                         if(type == INT_TYPE)
                         {
-                                lexeme->type = INT_TYPE;
-                                lexeme ->intVal = entry->lexeme->intVal + 1;
-                                entry->lexeme->intVal = lexeme->intVal;
+                                $$.type = INT_TYPE;
+                                $$.intVal = entry->lexeme->intVal + 1;
+                                entry->lexeme->intVal = $$.intVal;
                         }else
                         {
-                                lexeme->type = FLOAT_TYPE;
-                                lexeme ->floatVal = entry->lexeme->floatVal + 1;
-                                entry->lexeme->floatVal = lexeme->floatVal;
+                                $$.type = FLOAT_TYPE;
+                                $$.floatVal = entry->lexeme->floatVal + 1;
+                                entry->lexeme->floatVal = $$.floatVal;
                         }
-                        $$ = lexeme;
-                        char* temp = concatStrings(lexeme->stringRep,strdup(" := "));
+                        char* temp = concatStrings($$.stringRep,strdup(" := "));
                         temp = concatStrings(temp,strdup(" INC "));
                         temp = concatStrings(temp,$1);
                         addIntermidiateRep(temp);
@@ -423,21 +423,19 @@ unary_expression:
                 {
                         printSemanticError("Unary Operation should be on integer or float type at line number ",yylineno);
                 }else{
-                        Lexeme* lexeme = new Lexeme;
-                        lexeme -> stringRep = getCurrentCount();
+                        $$.stringRep = getCurrentCount();
                         if(type == INT_TYPE)
                         {
-                                lexeme->type = INT_TYPE;
-                                lexeme ->intVal = entry->lexeme->intVal -1 ;
-                                entry->lexeme->intVal = lexeme->intVal;
+                                $$.type = INT_TYPE;
+                                $$.intVal = entry->lexeme->intVal -1 ;
+                                entry->lexeme->intVal = $$.intVal;
                         }else
                         {
-                                lexeme->type = FLOAT_TYPE;
-                                lexeme ->floatVal = entry->lexeme->floatVal - 1;
-                                entry->lexeme->floatVal = lexeme->floatVal;
+                                $$.type = FLOAT_TYPE;
+                                $$.floatVal = entry->lexeme->floatVal - 1;
+                                entry->lexeme->floatVal = $$.floatVal;
                         }
-                        $$ = lexeme;
-                        char* temp = concatStrings(lexeme->stringRep,strdup(" := "));
+                        char* temp = concatStrings($$.stringRep,strdup(" := "));
                         temp = concatStrings(temp,strdup(" DEC "));
                         temp = concatStrings(temp,$1);
                         addIntermidiateRep(temp);
@@ -448,55 +446,51 @@ unary_expression:
 binary_expression:
         binary_expression PLUS term
         {
-                VariableType type1 = $1->type;
-                VariableType type2 = $3->type;
+                int type1 = $1.type;
+                int type2 = $3.type;
                 if((type1 != INT_TYPE && type1 != FLOAT_TYPE) || (type2 != INT_TYPE && type2 != FLOAT_TYPE))
                 {
                         printSemanticError("Addition operation must be between 2 numbers at line number ",yylineno);
                 }else{
-                        Lexeme* lexeme = new Lexeme;
-                        lexeme -> stringRep = getCurrentCount();
+                        $$.stringRep = getCurrentCount();
                         if(type1 == FLOAT_TYPE || type2 == FLOAT_TYPE)
                         {
-                                lexeme->type = FLOAT_TYPE;
-                                lexeme ->floatVal = $1->floatVal + $3->floatVal;
+                                $$.type = FLOAT_TYPE;
+                                $$.floatVal = $1.floatVal + $3.floatVal;
                         }
                         else{
-                                lexeme->type = INT_TYPE;
-                                lexeme ->intVal = $1->intVal + $3->intVal;
+                                $$.type = INT_TYPE;
+                                $$.intVal = $1.intVal + $3.intVal;
                         }
-                        $$ = lexeme;
-                        char* temp = concatStrings(lexeme->stringRep,strdup(" := "));
-                        temp = concatStrings(temp,$1->stringRep);
+                        char* temp = concatStrings($$.stringRep,strdup(" := "));
+                        temp = concatStrings(temp,$1.stringRep);
                         temp = concatStrings(temp,strdup(" ADD "));
-                        temp = concatStrings(temp,$3->stringRep);
+                        temp = concatStrings(temp,$3.stringRep);
                         addIntermidiateRep(temp);
                 }
         } 
         | binary_expression MINUS term 
         {
-                VariableType type1 = $1->type;
-                VariableType type2 = $3->type;
+                int type1 = $1.type;
+                int type2 = $3.type;
                 if((type1 != INT_TYPE && type1 != FLOAT_TYPE) || (type2 != INT_TYPE && type2 != FLOAT_TYPE))
                 {
                         printSemanticError("Subtraction operation must be between 2 numbers at line number ",yylineno);
                 }else{
-                        Lexeme* lexeme = new Lexeme;
-                        lexeme -> stringRep = getCurrentCount();
+                        $$.stringRep = getCurrentCount();
                         if(type1 == FLOAT_TYPE || type2 == FLOAT_TYPE)
                         {
-                                lexeme->type = FLOAT_TYPE;
-                                lexeme ->floatVal = $1->floatVal - $3->floatVal;
+                                $$.type = FLOAT_TYPE;
+                                $$.floatVal = $1.floatVal - $3.floatVal;
                         }
                         else{
-                                lexeme->type = INT_TYPE;
-                                lexeme ->intVal = $1->intVal - $3->intVal;
+                                $$.type = INT_TYPE;
+                                $$.intVal = $1.intVal - $3.intVal;
                         }
-                        $$ = lexeme;
-                        char* temp = concatStrings(lexeme->stringRep,strdup(" := "));
-                        temp = concatStrings(temp,$1->stringRep);
+                        char* temp = concatStrings($$.stringRep,strdup(" := "));
+                        temp = concatStrings(temp,$1.stringRep);
                         temp = concatStrings(temp,strdup(" SUB "));
-                        temp = concatStrings(temp,$3->stringRep);
+                        temp = concatStrings(temp,$3.stringRep);
                         addIntermidiateRep(temp);
                 }
         } 
@@ -507,55 +501,51 @@ term:
         factor 
         | term MULT factor
         {
-                VariableType type1 = $1->type;
-                VariableType type2 = $3->type;
+                int type1 = $1.type;
+                int type2 = $3.type;
                 if((type1 != INT_TYPE && type1 != FLOAT_TYPE) || (type2 != INT_TYPE && type2 != FLOAT_TYPE))
                 {
                         printSemanticError("Multiplication operation must be between 2 numbers at line number ",yylineno);
                 }else{
-                        Lexeme* lexeme = new Lexeme;
-                        lexeme -> stringRep = getCurrentCount();
+                        $$.stringRep = getCurrentCount();
                         if(type1 == FLOAT_TYPE || type2 == FLOAT_TYPE)
                         {
-                                lexeme->type = FLOAT_TYPE;
-                                lexeme ->floatVal = $1->floatVal * $3->floatVal;
+                                $$.type = FLOAT_TYPE;
+                                $$.floatVal = $1.floatVal * $3.floatVal;
                         }
                         else{
-                                lexeme->type = INT_TYPE;
-                                lexeme ->intVal = $1->intVal * $3->intVal;
+                                $$.type = INT_TYPE;
+                                $$.intVal = $1.intVal * $3.intVal;
                         }
-                        $$ = lexeme;
-                        char* temp = concatStrings(lexeme->stringRep,strdup(" := "));
-                        temp = concatStrings(temp,$1->stringRep);
+                        char* temp = concatStrings($$.stringRep,strdup(" := "));
+                        temp = concatStrings(temp,$1.stringRep);
                         temp = concatStrings(temp,strdup(" MUL "));
-                        temp = concatStrings(temp,$3->stringRep);
+                        temp = concatStrings(temp,$3.stringRep);
                         addIntermidiateRep(temp);
                 }
         } 
         | term DIV factor
         {
-                VariableType type1 = $1->type;
-                VariableType type2 = $3->type;
+                int type1 = $1.type;
+                int type2 = $3.type;
                 if((type1 != INT_TYPE && type1 != FLOAT_TYPE) || (type2 != INT_TYPE && type2 != FLOAT_TYPE))
                 {
                         printSemanticError("Division operation must be between 2 numbers at line number ",yylineno);
                 }else{
-                        Lexeme* lexeme = new Lexeme;
-                        lexeme -> stringRep = getCurrentCount();
+                        $$.stringRep = getCurrentCount();
                         if(type1 == FLOAT_TYPE || type2 == FLOAT_TYPE)
                         {
-                                lexeme->type = FLOAT_TYPE;
-                                lexeme ->floatVal = $1->floatVal / $3->floatVal;
+                                $$.type = FLOAT_TYPE;
+                                $$.floatVal = $1.floatVal / $3.floatVal;
                         }
                         else{
-                                lexeme->type = INT_TYPE;
-                                lexeme ->intVal = $1->intVal / $3->intVal;
+                                $$.type = INT_TYPE;
+                                $$.intVal = $1.intVal / $3.intVal;
                         }
-                        $$ = lexeme;
-                        char* temp = concatStrings(lexeme->stringRep,strdup(" := "));
-                        temp = concatStrings(temp,$1->stringRep);
+                        char* temp = concatStrings($$.stringRep,strdup(" := "));
+                        temp = concatStrings(temp,$1.stringRep);
                         temp = concatStrings(temp,strdup(" DIV "));
-                        temp = concatStrings(temp,$3->stringRep);
+                        temp = concatStrings(temp,$3.stringRep);
                         addIntermidiateRep(temp);
                 }
         } 
@@ -572,10 +562,14 @@ factor:
                         printSemanticError("Variable not declared at line number ",yylineno);
                         return 0;
                 }
-                char* id = $1;
-                $$ = entry->lexeme;
                 entry->isUsed = true;
-                $$->stringRep = id;
+                $$.type = (int)entry->lexeme->type;
+                $$.stringRep = $1;
+                $$.intVal = entry->lexeme->intVal;
+                $$.floatVal = entry->lexeme->floatVal;
+                $$.stringVal = entry->lexeme->stringVal;
+                $$.boolVal = entry->lexeme->boolVal;
+                $$.charVal = entry->lexeme->charVal;
         }  
         | OPENBRACKET expression CLOSEDBRACKET
         {
@@ -599,25 +593,25 @@ assignment_statement:
                         printSemanticError("Cannot assign value to a non variable type at line number ",yylineno);
                         return 0;
                 }
-                VariableType type1 = entry->lexeme->type;
-                VariableType type2 = $3->type;
+                int type1 = (int) entry->lexeme->type;
+                int type2 = $3.type;
                 if(!isTypeMatching(type1,type2))
                 {
                         printSemanticError("Type mismatch in assignment statement at line number ",yylineno);
                 }else{
                         char* temp = concatStrings($1,strdup(" := "));
-                        temp = concatStrings(temp,$3->stringRep);
+                        temp = concatStrings(temp,$3.stringRep);
                         addIntermidiateRep(temp);
                         entry->isInit = true;
                         if(type1 == INT_TYPE && type2 == FLOAT_TYPE)
                         {
-                                entry->lexeme->intVal = (int)$3->floatVal;
+                                entry->lexeme->intVal = (int)$3.floatVal;
                                  
                         }else if (type1 == FLOAT_TYPE && type2 == INT_TYPE)
                         {
-                                entry->lexeme->floatVal = (float)$3->intVal;
+                                entry->lexeme->floatVal = (float)$3.intVal;
                         }else{
-                                entry->lexeme = $3;
+                                entry->lexeme = convertLexemeToEntry($3.type, $3.stringRep, $3.intVal, $3.floatVal, $3.stringVal, $3.boolVal, $3.charVal);
                         }
                 }
         } 
@@ -638,27 +632,26 @@ assignment_statement:
                         printSemanticError("Variable not initialized at line number ",yylineno);
                         return 0;
                 }
-                VariableType type1 = entry->lexeme->type;
-                VariableType type2 = $3->type;
+                int type1 = (int)entry->lexeme->type;
+                int type2 = $3.type;
                 if((type1 != INT_TYPE && type1 != FLOAT_TYPE) || (type2 != INT_TYPE && type2 != FLOAT_TYPE))
                 {
                         printSemanticError("Addition operation must be between 2 numbers at line number ",yylineno);
-                
                 }else{
                         char* temp = concatStrings($1,strdup(" :+= "));
-                        temp = concatStrings(temp,$3->stringRep);
+                        temp = concatStrings(temp,$3.stringRep);
                         addIntermidiateRep(temp);
                         if(type1 == INT_TYPE && type2 == FLOAT_TYPE)
                         {
-                                entry->lexeme->intVal = entry->lexeme->intVal + (int)$3->floatVal ;
+                                entry->lexeme->intVal = entry->lexeme->intVal + (int)$3.floatVal ;
                         }else if (type1 == FLOAT_TYPE && type2 == INT_TYPE)
                         {
-                                entry->lexeme->floatVal = entry->lexeme->floatVal + (float)$3->intVal ;
+                                entry->lexeme->floatVal = entry->lexeme->floatVal + (float)$3.intVal ;
                         }else if (type1 == INT_TYPE && type2 == INT_TYPE)
                         {
-                                entry->lexeme->intVal = entry->lexeme->intVal + $3->intVal ;
+                                entry->lexeme->intVal = entry->lexeme->intVal + $3.intVal ;
                         }else{
-                                entry->lexeme->floatVal = entry->lexeme->floatVal + $3->floatVal ;
+                                entry->lexeme->floatVal = entry->lexeme->floatVal + $3.floatVal ;
                         }
                 }
         } 
@@ -679,27 +672,27 @@ assignment_statement:
                         printSemanticError("Variable not initialized at line number ",yylineno);
                         return 0;
                 }
-                VariableType type1 = entry->lexeme->type;
-                VariableType type2 = $3->type;
+                int type1 = (int)entry->lexeme->type;
+                int type2 = $3.type;
                 if((type1 != INT_TYPE && type1 != FLOAT_TYPE) || (type2 != INT_TYPE && type2 != FLOAT_TYPE))
                 {
                         printSemanticError("Subtraction operation must be between 2 numbers at line number ",yylineno);
                 
                 }else{
                         char* temp = concatStrings($1,strdup(" :-= "));
-                        temp = concatStrings(temp,$3->stringRep);
+                        temp = concatStrings(temp,$3.stringRep);
                         addIntermidiateRep(temp);
                         if(type1 == INT_TYPE && type2 == FLOAT_TYPE)
                         {
-                                entry->lexeme->intVal = entry->lexeme->intVal - (int)$3->floatVal ;
+                                entry->lexeme->intVal = entry->lexeme->intVal - (int)$3.floatVal ;
                         }else if (type1 == FLOAT_TYPE && type2 == INT_TYPE)
                         {
-                                entry->lexeme->floatVal = entry->lexeme->floatVal - (float)$3->intVal ;
+                                entry->lexeme->floatVal = entry->lexeme->floatVal - (float)$3.intVal ;
                         }else if (type1 == INT_TYPE && type2 == INT_TYPE)
                         {
-                                entry->lexeme->intVal = entry->lexeme->intVal - $3->intVal ;
+                                entry->lexeme->intVal = entry->lexeme->intVal - $3.intVal ;
                         }else{
-                                entry->lexeme->floatVal = entry->lexeme->floatVal - $3->floatVal ;
+                                entry->lexeme->floatVal = entry->lexeme->floatVal - $3.floatVal ;
                         }
                 }
         } 
@@ -720,27 +713,27 @@ assignment_statement:
                         printSemanticError("Variable not initialized at line number ",yylineno);
                         return 0;
                 }
-                VariableType type1 = entry->lexeme->type;
-                VariableType type2 = $3->type;
+                int type1 = (int)entry->lexeme->type;
+                int type2 = $3.type;
                 if((type1 != INT_TYPE && type1 != FLOAT_TYPE) || (type2 != INT_TYPE && type2 != FLOAT_TYPE))
                 {
                         printSemanticError("Multiplication operation must be between 2 numbers at line number ",yylineno);
                 
                 }else{
                         char* temp = concatStrings($1,strdup(" :*= "));
-                        temp = concatStrings(temp,$3->stringRep);
+                        temp = concatStrings(temp,$3.stringRep);
                         addIntermidiateRep(temp);
                         if(type1 == INT_TYPE && type2 == FLOAT_TYPE)
                         {
-                                entry->lexeme->intVal = entry->lexeme->intVal * (int)$3->floatVal ;
+                                entry->lexeme->intVal = entry->lexeme->intVal * (int)$3.floatVal ;
                         }else if (type1 == FLOAT_TYPE && type2 == INT_TYPE)
                         {
-                                entry->lexeme->floatVal = entry->lexeme->floatVal * (float)$3->intVal ;
+                                entry->lexeme->floatVal = entry->lexeme->floatVal * (float)$3.intVal ;
                         }else if (type1 == INT_TYPE && type2 == INT_TYPE)
                         {
-                                entry->lexeme->intVal = entry->lexeme->intVal * $3->intVal ;
+                                entry->lexeme->intVal = entry->lexeme->intVal * $3.intVal ;
                         }else{
-                                entry->lexeme->floatVal = entry->lexeme->floatVal * $3->floatVal ;
+                                entry->lexeme->floatVal = entry->lexeme->floatVal * $3.floatVal ;
                         }
                 }
         } 
@@ -761,27 +754,27 @@ assignment_statement:
                         printSemanticError("Variable not initialized at line number ",yylineno);
                         return 0;
                 }
-                VariableType type1 = entry->lexeme->type;
-                VariableType type2 = $3->type;
+                int type1 = (int) entry->lexeme->type;
+                int type2 = $3.type;
                 if((type1 != INT_TYPE && type1 != FLOAT_TYPE) || (type2 != INT_TYPE && type2 != FLOAT_TYPE))
                 {
                         printSemanticError("Division operation must be between 2 numbers at line number ",yylineno);
                 
                 }else{
                         char* temp = concatStrings($1,strdup(" :/= "));
-                        temp = concatStrings(temp,$3->stringRep);
+                        temp = concatStrings(temp,$3.stringRep);
                         addIntermidiateRep(temp);
                         if(type1 == INT_TYPE && type2 == FLOAT_TYPE)
                         {
-                                entry->lexeme->intVal = entry->lexeme->intVal / (int)$3->floatVal ;
+                                entry->lexeme->intVal = entry->lexeme->intVal / (int)$3.floatVal ;
                         }else if (type1 == FLOAT_TYPE && type2 == INT_TYPE)
                         {
-                                entry->lexeme->floatVal = entry->lexeme->floatVal / (float)$3->intVal ;
+                                entry->lexeme->floatVal = entry->lexeme->floatVal / (float)$3.intVal ;
                         }else if (type1 == INT_TYPE && type2 == INT_TYPE)
                         {
-                                entry->lexeme->intVal = entry->lexeme->intVal / $3->intVal ;
+                                entry->lexeme->intVal = entry->lexeme->intVal / $3.intVal ;
                         }else{
-                                entry->lexeme->floatVal = entry->lexeme->floatVal / $3->floatVal ;
+                                entry->lexeme->floatVal = entry->lexeme->floatVal / $3.floatVal ;
                         }
                 }
         } 
@@ -795,26 +788,30 @@ var_declaration:
                         printSemanticError("Variable already declared at line number ",yylineno);
                         return 0;
                 }
-                VariableType type1 = $1;
-                VariableType type2 = $4->type;
+                int type1 = $1;
+                int type2 = $4.type;
                 if(!isTypeMatching(type1,type2))
                 {
                         printSemanticError("Type mismatch in variable declaration at line number ",yylineno);
                 }else{
-                        Lexeme* lexeme = new Lexeme;
-                        lexeme->type = type1;
-                        lexeme -> stringRep = getCurrentCount();
+                        LexemeEntry* lexeme = new LexemeEntry;
+                        lexeme->type = static_cast<VariableType>(type1);
+                        lexeme->stringRep = getCurrentCount();
                         if(type1 == INT_TYPE && type2 == FLOAT_TYPE)
                         {
-                                lexeme->intVal = (int)$4->floatVal;
+                                lexeme->intVal = (int)$4.floatVal;
                         }else if (type1 == FLOAT_TYPE && type2 == INT_TYPE)
                         {
-                                lexeme->floatVal = (float)$4->intVal;
+                                lexeme->floatVal = (float)$4.intVal;
                         }else{
-                                lexeme = $4;
+                                lexeme->intVal = $4.intVal;
+                                lexeme->floatVal = $4.floatVal;
+                                lexeme->stringVal = $4.stringVal;
+                                lexeme->boolVal = $4.boolVal;
+                                lexeme->charVal = $4.charVal;
                         }
                         char* temp = concatStrings($2,strdup(" := "));
-                        temp = concatStrings(temp,$4->stringRep);
+                        temp = concatStrings(temp,$4.stringRep);
                         addIntermidiateRep(temp);
                         addEntryToTable($2,lexeme,VAR,true);
                 }
@@ -827,9 +824,9 @@ var_declaration:
                         return 0;
                 }
 
-                Lexeme* lexeme = new Lexeme;
-                lexeme->type = $1;
-                lexeme -> stringRep = getCurrentCount();
+                LexemeEntry* lexeme = new LexemeEntry;
+                lexeme->type = static_cast<VariableType>($1);
+                lexeme->stringRep = getCurrentCount();
                 addEntryToTable($2,lexeme,VAR,false);
         
          }
@@ -846,9 +843,9 @@ var_declaration:
                         return 0;
                 }
 
-                Lexeme* lexeme = new Lexeme;
+                LexemeEntry* lexeme = new LexemeEntry;
                 lexeme->type = ENUM_TYPE;
-                lexeme -> stringRep = getCurrentCount();
+                lexeme->stringRep = getCurrentCount();
                 addEntryToTable($2,lexeme,VAR,false,pointerToEnum);
         
          }
@@ -861,26 +858,30 @@ constant_declaration:
                         printSemanticError("Variable already declared at line number ",yylineno);
                         return 0;
                 }
-                VariableType type1 = $2;
-                VariableType type2 = $5->type;
+                int type1 = $2;
+                int type2 = $5.type;
                 if(!isTypeMatching(type1,type2))
                 {
                         printSemanticError("Type mismatch in variable declaration at line number ",yylineno);
                 }else{
-                        Lexeme* lexeme = new Lexeme;
-                        lexeme->type = type1;
-                        lexeme -> stringRep = getCurrentCount();
+                        LexemeEntry* lexeme = new LexemeEntry;
+                        lexeme->type = static_cast<VariableType>(type1);
+                        lexeme->stringRep = getCurrentCount();
                         if(type1 == INT_TYPE && type2 == FLOAT_TYPE)
                         {
-                                lexeme->intVal = (int)$5->floatVal;
+                                lexeme->intVal = (int)$5.floatVal;
                         }else if (type1 == FLOAT_TYPE && type2 == INT_TYPE)
                         {
-                                lexeme->floatVal = (float)$5->intVal;
+                                lexeme->floatVal = (float)$5.intVal;
                         }else{
-                                lexeme = $5;
+                                lexeme->intVal = $5.intVal;
+                                lexeme->floatVal = $5.floatVal;
+                                lexeme->stringVal = $5.stringVal;
+                                lexeme->boolVal = $5.boolVal;
+                                lexeme->charVal = $5.charVal;
                         }
                         char* temp = concatStrings($3,strdup(" := "));
-                        temp = concatStrings(temp,$5->stringRep);
+                        temp = concatStrings(temp,$5.stringRep);
                         addIntermidiateRep(temp);
                         addEntryToTable($3,lexeme,CONSTANT,true);
                 }        
@@ -889,7 +890,7 @@ constant_declaration:
 /* If statement */
 
 if_statement: 
-        IF OPENBRACKET value { checkIfLexemIsBool($3,yylineno);}  CLOSEDBRACKET OPENCURL {createNewTable();} statements CLOSEDCURL {exitCurrentScope();} else_if_statement else_statement 
+        IF OPENBRACKET value { checkIfLexemIsBool($3.type != BOOL_TYPE,yylineno);}  CLOSEDBRACKET OPENCURL {createNewTable();} statements CLOSEDCURL {exitCurrentScope();} else_if_statement else_statement 
 	;
 
 else_statement: 
@@ -897,26 +898,26 @@ else_statement:
         |
         ;
 else_if_statement:
-        else_if_statement ELSEIF OPENBRACKET  value { checkIfLexemIsBool($4,yylineno);} CLOSEDBRACKET OPENCURL {createNewTable();} statements CLOSEDCURL {exitCurrentScope();} 
+        else_if_statement ELSEIF OPENBRACKET  value { checkIfLexemIsBool($4.type != BOOL_TYPE,yylineno);} CLOSEDBRACKET OPENCURL {createNewTable();} statements CLOSEDCURL {exitCurrentScope();} 
         | 
         ;
 
 /* While statement */
 
 while_statement:
-		WHILE  OPENBRACKET value { checkIfLexemIsBool($3,yylineno);} CLOSEDBRACKET statement  
+		WHILE  OPENBRACKET value { checkIfLexemIsBool($3.type != BOOL_TYPE,yylineno);} CLOSEDBRACKET statement  
 		;
 
 /* Do while statement */
 
 do_while_statement:
-	DO statement WHILE OPENBRACKET value { checkIfLexemIsBool($5,yylineno);} CLOSEDBRACKET SEMICOLON 
+	DO statement WHILE OPENBRACKET value { checkIfLexemIsBool($5.type != BOOL_TYPE,yylineno);} CLOSEDBRACKET SEMICOLON 
 	;
 
 /* For statement */
 
 for_statement:
-	FOR {createNewTable();} OPENBRACKET for_initialization value { checkIfLexemIsBool($5,yylineno);} SEMICOLON for_expression CLOSEDBRACKET OPENCURL statements CLOSEDCURL {exitCurrentScope();}
+	FOR {createNewTable();} OPENBRACKET for_initialization value { checkIfLexemIsBool($5.type != BOOL_TYPE,yylineno);} SEMICOLON for_expression CLOSEDBRACKET OPENCURL statements CLOSEDCURL {exitCurrentScope();}
 	;
 
 for_initialization:
