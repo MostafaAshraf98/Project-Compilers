@@ -9,10 +9,10 @@ parser.cpp: parser.y
 	bison -d -o parser.c parser.y
 
 program.exe: lexer.cpp parser.cpp
-	g++ -o program.exe lexer.c parser.c
+	g++ -g -o program.exe lexer.c parser.c
 
 clean:
 	rm -f lexer.c parser.c parser.h lexer.cpp parser.cpp parser.hpp parser.output program.exe
 
 run: program.exe
-	./program.exe
+	 gdb ./program.exe

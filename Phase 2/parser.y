@@ -970,7 +970,7 @@ enum_initialization:
                         printSemanticError("Variable already declared at line number ",yylineno);
                         return 0;
                 }
-                if(pointerToEnum->lexeme->kind != ENUMERATOR)
+                if(pointerToEnum->kind != ENUMERATOR)
                 {
                         printSemanticError("Variable is not of enum type at line number ",yylineno);
                         return 0;
@@ -1149,6 +1149,7 @@ call_parameter:			call_parameter COMMA value | value ;
 
 int main (void)
 {
+    Init();
     yyin = fopen("test.txt", "r+");
     if (yyin == NULL)
     {
