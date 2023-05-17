@@ -42,6 +42,7 @@ class SymbolTableEntry{
         bool isUsed = false;
         VariableType functionOutput;
         SymbolTableEntry* pointerToEnum = NULL;
+        vector<VariableType> functionInput;
         vector<char*> enumValues;
 };
 

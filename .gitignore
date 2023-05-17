@@ -4,6 +4,7 @@ test.*
 Phase 1/
 !lexer.l
 !parser.y
+Testcases/
 
 lexer.c
 parser.c

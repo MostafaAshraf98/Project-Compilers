@@ -7,12 +7,14 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
+#include <stack>
 using namespace std;
 
 SymbolTable *currentSymbolTable;
 SymbolTable *rootSymbolTable;
 SymbolTableEntry* currentFunction = NULL;
 SymbolTableEntry* currentEnum = NULL;
+stack<VariableType> functionParameters;
 
 FILE *semanticFile = fopen("semantic-error.txt", "w");
 FILE *quadrupleFile = fopen("quadruple.txt", "w");
@@ -53,6 +55,8 @@ bool addEntryToTable(char *identifier, LexemeEntry *lexeme, Kind kind, bool isIn
     entry->pointerToEnum = pointerToEnum;
     entry->functionOutput = functionOutput;
     string id(identifier);
+    if(kind == FUNC)
+        currentFunction = entry;
 
     (currentSymbolTable->entries)[id] = entry;
     return true;
@@ -111,6 +115,15 @@ bool isTypeMatching(int type1, int type2)
     if (type1 == type2 || (type1 == INT_TYPE && type2 == FLOAT_TYPE) || (type1 == FLOAT_TYPE && type2 == INT_TYPE))
         return true;
     return false;
+}
+
+void convertFunctionParamsToStack(SymbolTableEntry *currentFunc)
+{
+    functionParameters = stack<VariableType>();
+    for(int i = currentFunc->functionInput.size() - 1; i >= 0; i--)
+    {
+         functionParameters.push(currentFunc->functionInput[i]);
+    }
 }
 
 void traverseSymbolTable(SymbolTable *table, int level, ofstream &outputFile)

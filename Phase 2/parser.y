@@ -27,7 +27,6 @@
 
         /* Rules types */
 %type<varType> type
-%type<varType> return_value
 %type<lexeme> value
 %type<lexeme> constant
 %type<lexeme> expression
@@ -585,13 +584,32 @@ assignment_statement:
         IDENTIFIER EQUAL expression SEMICOLON
         {
                 SymbolTableEntry* entry = getIdEntry($1);
-                if(entry == NULL){
+                if(entry == NULL)
+                {
                         printSemanticError("Undeclared Variable",yylineno);
                         return 0;
                 }
                 if(entry->kind != VAR)
                 {
                         printSemanticError("Cannot assign value to a non variable type",yylineno);
+                        return 0;
+                }
+                if(entry->lexeme->type == ENUM_TYPE)
+                {
+                        SymbolTableEntry* pointerToEnum = entry->pointerToEnum;
+                        if(pointerToEnum->isInit == false)
+                        {
+                                printSemanticError("Enum not initialized",yylineno);
+                                return 0;
+                        }
+                        
+                        if(idExistsInEnum(pointerToEnum,$3.stringRep) == false)
+                        {
+                                printSemanticError("Enum value not defined",yylineno);
+                                return 0;
+                        }
+                        entry->lexeme->stringVal = $3.stringRep;
+                        entry->isInit = true;
                         return 0;
                 }
                 int type1 = (int) entry->lexeme->type;
@@ -1009,40 +1027,58 @@ enum_list:
         {
                 currentEnum->enumValues.push_back($3);
         }
-        
         |IDENTIFIER
         {
                 currentEnum->enumValues.push_back($1);
-        }  ;
+        }
+        ;
 
 /* Function Declaration */
 
-function: 			function_prototype OPENCURL statements CLOSEDCURL {exitCurrentScope();}
+function: function_prototype OPENCURL statements CLOSEDCURL {exitCurrentScope(); currentFunction = NULL;}
 						
 return_value: 			
         value
         {
-          $$ = $1.type;
+                if(currentFunction == NULL)
+                {
+                        printSemanticError("Return statement not in function",yylineno);
+                        return 0;
+                }
+                if(currentFunction->functionOutput == VOID_TYPE)
+                {
+                        printSemanticError("Function does not return a value",yylineno);
+                        return 0;
+                }
         }
         | 
         {
-          $$ = VOID_TYPE;
+                if(currentFunction == NULL)
+                {
+                        printSemanticError("Return statement not in function",yylineno);
+                        return 0;
+                }
+                if(currentFunction->functionOutput != VOID_TYPE)
+                {
+                        printSemanticError("Function does not return a value",yylineno);
+                        return 0;
+                }
         };
 
 function_prototype:	
 
     type IDENTIFIER OPENBRACKET {
-        SymbolTableEntry* entry = getIdEntry($2);
-        if(entry != NULL){
-                printSemanticError("Function already declared",yylineno);
-                return 0;
-        }
-        LexemeEntry* lexeme = new LexemeEntry;
-        lexeme->type = static_cast<VariableType>($1);
-        lexeme->stringRep = getCurrentCount();
-        VariableType functionOutput = static_cast<VariableType>($1);
-        addEntryToTable($2,lexeme,FUNC,false,NULL, functionOutput);
-        createNewTable();
+                SymbolTableEntry* entry = getIdEntry($2);
+                if(entry != NULL){
+                        printSemanticError("Function already declared",yylineno);
+                        return 0;
+                }
+                LexemeEntry* lexeme = new LexemeEntry;
+                lexeme->type = static_cast<VariableType>($1);
+                lexeme->stringRep = getCurrentCount();
+                VariableType functionOutput = static_cast<VariableType>($1);
+                addEntryToTable($2,lexeme,FUNC,false,NULL, functionOutput);
+                createNewTable();
 
         } parameters CLOSEDBRACKET
 
@@ -1098,7 +1134,9 @@ single_parameter:
                         return 0;
                 }
                 LexemeEntry* lexeme = new LexemeEntry;
-                lexeme->type = static_cast<VariableType>($1);
+                VariableType t = static_cast<VariableType>($1);
+                lexeme->type = t;
+                currentFunction->functionInput.push_back(t);
                 lexeme->stringRep = getCurrentCount();
                 addEntryToTable($2,lexeme,PARAM,true);
         } 
@@ -1116,7 +1154,10 @@ single_parameter:
                         printSemanticError("Type mismatch in variable declaration",yylineno);
                 }else{
                         LexemeEntry* lexeme = new LexemeEntry;
-                        lexeme->type = static_cast<VariableType>(type1);
+                        VariableType t = static_cast<VariableType>(type1);
+                        lexeme->type = t;
+                        currentFunction->functionInput.push_back(t);
+                        lexeme->type = t;
                         lexeme->stringRep = getCurrentCount();
                         if(type1 == INT_TYPE && type2 == FLOAT_TYPE)
                         {
@@ -1136,8 +1177,8 @@ single_parameter:
         };
 
 function_call: 			
-        IDENTIFIER OPENBRACKET call_parameters CLOSEDBRACKET
-        {
+        IDENTIFIER OPENBRACKET
+         {
                 SymbolTableEntry* entry = getIdEntry($1);
                 if(entry == NULL){
                         printSemanticError("Function not declared",yylineno);
@@ -1148,6 +1189,15 @@ function_call:
                         printSemanticError("Cannot call a non function type",yylineno);
                         return 0;
                 }
+                convertFunctionParamsToStack(entry);
+        }call_parameters CLOSEDBRACKET
+        {
+                if(functionParameters.size() != 0)
+                {
+                        printSemanticError("Function call parameters do not match function definition",yylineno);
+                        return 0;
+                }
+                SymbolTableEntry* entry = getIdEntry($1);
                 $$.type = (int)entry->functionOutput;
                 $$.stringRep = $1;
                 $$.intVal = entry->lexeme->intVal;
@@ -1155,11 +1205,44 @@ function_call:
                 $$.stringVal = entry->lexeme->stringVal;
                 $$.boolVal = entry->lexeme->boolVal;
                 $$.charVal = entry->lexeme->charVal;
-        };
+        }
+        ;
 
-call_parameters:		call_parameter |;
+call_parameters:		
+        call_parameters COMMA value
+        {
+                if(functionParameters.size() == 0)
+                {
+                        printSemanticError("Function call parameters do not match function definition",yylineno);
+                        return 0;
+                }
+                int type1 = (int)functionParameters.top();
+                int type2 = $3.type;
+                if(!isTypeMatching(type1,type2))
+                {
+                        printSemanticError("Type mismatch in function call",yylineno);
+                }else{
+                        functionParameters.pop();
+                }
+        } 
+        | value
+        {
+                if(functionParameters.size() == 0)
+                {
+                        printSemanticError("Function call parameters do not match function definition",yylineno);
+                        return 0;
+                }
+                int type1 = (int)functionParameters.top();
+                int type2 = $1.type;
+                if(!isTypeMatching(type1,type2))
+                {
+                        printSemanticError("Type mismatch in function call",yylineno);
+                }else{
+                        functionParameters.pop();
+                }
+        } 
+        |;
 
-call_parameter:			call_parameter COMMA value | value ;
 
 %%
 
