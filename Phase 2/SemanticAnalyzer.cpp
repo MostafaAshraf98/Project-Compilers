@@ -11,6 +11,8 @@ using namespace std;
 
 SymbolTable *currentSymbolTable;
 SymbolTable *rootSymbolTable;
+SymbolTableEntry* currentFunction = NULL;
+SymbolTableEntry* currentEnum = NULL;
 
 FILE *semanticFile = fopen("semantic-error.txt", "w");
 FILE *quadrupleFile = fopen("quadruple.txt", "w");

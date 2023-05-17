@@ -559,6 +559,11 @@ factor:
                         printSemanticError("Variable not declared",yylineno);
                         return 0;
                 }
+                if(entry->isInit == false)
+                {
+                        printSemanticError("Variable not initialized",yylineno);
+                        return 0;
+                }
                 entry->isUsed = true;
                 $$.type = (int)entry->lexeme->type;
                 $$.stringRep = $1;
@@ -901,8 +906,8 @@ else_if_statement:
 /* While statement */
 
 while_statement:
-		WHILE  OPENBRACKET value { checkIfLexemIsBool($3.type != BOOL_TYPE,yylineno);} CLOSEDBRACKET statement  
-		;
+	WHILE  OPENBRACKET value { checkIfLexemIsBool($3.type != BOOL_TYPE,yylineno);} CLOSEDBRACKET statement  
+	;
 
 /* Do while statement */
 
@@ -986,14 +991,29 @@ enum_initialization:
 enum_declaration: 	        
         ENUM IDENTIFIER OPENCURL enum_list CLOSEDCURL SEMICOLON 
         {
-                
+                SymbolTableEntry* entry = getIdEntry($2);
+                if(entry != NULL){
+                        printSemanticError("Variable already declared",yylineno);
+                        return 0;
+                }
+                LexemeEntry* lexeme = new LexemeEntry;
+                lexeme->type = ENUM_TYPE;
+                lexeme->stringRep = getCurrentCount();
+                currentEnum = entry;
+                addEntryToTable($2,lexeme,ENUMERATOR,true,NULL);
+                createNewTable();
         }
-        | ENUM IDENTIFIER SEMICOLON
-        {
-
-        }
+        ;
 enum_list:                      
-        enum_list COMMA IDENTIFIER |IDENTIFIER  ;
+        enum_list COMMA IDENTIFIER 
+        {
+                currentEnum->enumValues.push_back($3);
+        }
+        
+        |IDENTIFIER
+        {
+                currentEnum->enumValues.push_back($1);
+        }  ;
 
 /* Function Declaration */
 
