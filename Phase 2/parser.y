@@ -39,8 +39,6 @@
 %type<lexeme> factor
 %type<lexeme> function_call 
 
-
-
         /* Identifier and Values */
 %token IDENTIFIER
 %token INT_VAL
@@ -99,7 +97,6 @@
 %type<varType> CHAR
 %type<varType> BOOL
 %type<varType> STRING
-
 
         /* if then else statement */
 %token IF
@@ -193,7 +190,7 @@ boolean_expression:
                 int type2 = $3.type;
                 if(!isTypeMatching(type1,type2))
                 {
-                        printSemanticError("Type mismatch in boolean expression at line number ",yylineno);
+                        printSemanticError("Type mismatch in boolean expression",yylineno);
                 }else{
                         $$.type = BOOL_TYPE;
                         $$.stringRep = getCurrentCount();
@@ -213,7 +210,7 @@ boolean_expression:
                 int type2 = $3.type;
                 if(!isTypeMatching(type1,type2))
                 {
-                        printSemanticError("Type mismatch in boolean expression at line number ",yylineno);
+                        printSemanticError("Type mismatch in boolean expression",yylineno);
                 }else{
                         $$.type = BOOL_TYPE;
                         $$.stringRep = getCurrentCount();
@@ -233,7 +230,7 @@ boolean_expression:
                 int type2 = $3.type;
                 if(!isTypeMatching(type1,type2))
                 {
-                        printSemanticError("Type mismatch in boolean expression at line number ",yylineno);
+                        printSemanticError("Type mismatch in boolean expression",yylineno);
                 }else{
                         $$.type = BOOL_TYPE;
                         $$.stringRep = getCurrentCount();
@@ -246,14 +243,14 @@ boolean_expression:
                         temp = concatStrings(temp,$3.stringRep);
                         addIntermidiateRep(temp);
                 }
-        } 
+        }
         | expression LE arithmetic_expression
         {
                 int type1 = $1.type;
                 int type2 = $3.type;
                 if(!isTypeMatching(type1,type2))
                 {
-                        printSemanticError("Type mismatch in boolean expression at line number ",yylineno);
+                        printSemanticError("Type mismatch in boolean expression",yylineno);
                 }else{
                         $$.type = BOOL_TYPE;
                         $$.stringRep = getCurrentCount();
@@ -266,14 +263,14 @@ boolean_expression:
                         temp = concatStrings(temp,$3.stringRep);
                         addIntermidiateRep(temp);
                 }
-        } 
+        }
         | expression GT arithmetic_expression
         {
                 int type1 = $1.type;
                 int type2 = $3.type;
                 if(!isTypeMatching(type1,type2))
                 {
-                        printSemanticError("Type mismatch in boolean expression at line number ",yylineno);
+                        printSemanticError("Type mismatch in boolean expression",yylineno);
                 }else{
                         $$.type = BOOL_TYPE;
                         $$.stringRep = getCurrentCount();
@@ -293,7 +290,7 @@ boolean_expression:
                 int type2 = $3.type;
                 if(!isTypeMatching(type1,type2))
                 {
-                        printSemanticError("Type mismatch in boolean expression at line number ",yylineno);
+                        printSemanticError("Type mismatch in boolean expression",yylineno);
                 }else{
                         $$.type = BOOL_TYPE;
                         $$.stringRep = getCurrentCount();
@@ -313,7 +310,7 @@ boolean_expression:
                 int type2 = $3.type;
                 if(type1 != BOOL_TYPE || type2 != BOOL_TYPE)
                 {
-                        printSemanticError("AND Operation should be between boolean types at line number ",yylineno);
+                        printSemanticError("AND Operation should be between boolean types",yylineno);
                 }else{
                         $$.type = BOOL_TYPE;
                         $$.stringRep = getCurrentCount();
@@ -324,14 +321,14 @@ boolean_expression:
                         temp = concatStrings(temp,$3.stringRep);
                         addIntermidiateRep(temp);
                 }
-        } 
+        }
         | expression OR arithmetic_expression
         {
                 int type1 = $1.type;
                 int type2 = $3.type;
                 if(type1 != BOOL_TYPE || type2 != BOOL_TYPE)
                 {
-                        printSemanticError("OR Operation should be between boolean types at line number ",yylineno);
+                        printSemanticError("OR Operation should be between boolean types",yylineno);
                 }else{
                         $$.type = BOOL_TYPE;
                         $$.stringRep = getCurrentCount();
@@ -348,7 +345,7 @@ boolean_expression:
                 int type = $2.type;
                 if(type != BOOL_TYPE)
                 {
-                        printSemanticError("NOT Operation should be on boolean type at line number ",yylineno);
+                        printSemanticError("NOT Operation should be on boolean type",yylineno);
                 }else{
                         $$.type = BOOL_TYPE;
                         $$.stringRep = getCurrentCount();
@@ -358,7 +355,7 @@ boolean_expression:
                         temp = concatStrings(temp,$2.stringRep);
                         addIntermidiateRep(temp);
                 }
-        } 
+        }
         | TRUE_VAL 
         | FALSE_VAL 
         ;
@@ -375,18 +372,18 @@ unary_expression:
         {
                 SymbolTableEntry* entry = getIdEntry($1);
                 if(entry == NULL){
-                        printSemanticError("Variable not declared at line number ",yylineno);
+                        printSemanticError("Variable not declared",yylineno);
                         return 0;
                 }
                 if(entry->isInit == false)
                 {
-                        printSemanticError("Variable not initialized at line number ",yylineno);
+                        printSemanticError("Variable not initialized",yylineno);
                         return 0;
                 }
                 VariableType type = entry->lexeme->type;
                 if(type != INT_TYPE && type != FLOAT_TYPE)
                 {
-                        printSemanticError("Unary Operation should be on integer or float type at line number ",yylineno);
+                        printSemanticError("Unary Operation should be on integer or float type",yylineno);
                 }else{
                         $$.stringRep = getCurrentCount();
                         if(type == INT_TYPE)
@@ -410,18 +407,18 @@ unary_expression:
         {
                 SymbolTableEntry* entry = getIdEntry($1);
                 if(entry == NULL){
-                        printSemanticError("Variable not declared at line number ",yylineno);
+                        printSemanticError("Variable not declared",yylineno);
                         return 0;
                 }
                 if(entry->isInit == false)
                 {
-                        printSemanticError("Variable not initialized at line number ",yylineno);
+                        printSemanticError("Variable not initialized",yylineno);
                         return 0;
                 }
                 VariableType type = entry->lexeme->type;
                 if(type != INT_TYPE && type != FLOAT_TYPE)
                 {
-                        printSemanticError("Unary Operation should be on integer or float type at line number ",yylineno);
+                        printSemanticError("Unary Operation should be on integer or float type",yylineno);
                 }else{
                         $$.stringRep = getCurrentCount();
                         if(type == INT_TYPE)
@@ -450,7 +447,7 @@ binary_expression:
                 int type2 = $3.type;
                 if((type1 != INT_TYPE && type1 != FLOAT_TYPE) || (type2 != INT_TYPE && type2 != FLOAT_TYPE))
                 {
-                        printSemanticError("Addition operation must be between 2 numbers at line number ",yylineno);
+                        printSemanticError("Addition operation must be between 2 numbers",yylineno);
                 }else{
                         $$.stringRep = getCurrentCount();
                         if(type1 == FLOAT_TYPE || type2 == FLOAT_TYPE)
@@ -475,7 +472,7 @@ binary_expression:
                 int type2 = $3.type;
                 if((type1 != INT_TYPE && type1 != FLOAT_TYPE) || (type2 != INT_TYPE && type2 != FLOAT_TYPE))
                 {
-                        printSemanticError("Subtraction operation must be between 2 numbers at line number ",yylineno);
+                        printSemanticError("Subtraction operation must be between 2 numbers",yylineno);
                 }else{
                         $$.stringRep = getCurrentCount();
                         if(type1 == FLOAT_TYPE || type2 == FLOAT_TYPE)
@@ -505,7 +502,7 @@ term:
                 int type2 = $3.type;
                 if((type1 != INT_TYPE && type1 != FLOAT_TYPE) || (type2 != INT_TYPE && type2 != FLOAT_TYPE))
                 {
-                        printSemanticError("Multiplication operation must be between 2 numbers at line number ",yylineno);
+                        printSemanticError("Multiplication operation must be between 2 numbers",yylineno);
                 }else{
                         $$.stringRep = getCurrentCount();
                         if(type1 == FLOAT_TYPE || type2 == FLOAT_TYPE)
@@ -530,7 +527,7 @@ term:
                 int type2 = $3.type;
                 if((type1 != INT_TYPE && type1 != FLOAT_TYPE) || (type2 != INT_TYPE && type2 != FLOAT_TYPE))
                 {
-                        printSemanticError("Division operation must be between 2 numbers at line number ",yylineno);
+                        printSemanticError("Division operation must be between 2 numbers",yylineno);
                 }else{
                         $$.stringRep = getCurrentCount();
                         if(type1 == FLOAT_TYPE || type2 == FLOAT_TYPE)
@@ -559,7 +556,7 @@ factor:
         {
                 SymbolTableEntry* entry = getIdEntry($1);
                 if(entry == NULL){
-                        printSemanticError("Variable not declared at line number ",yylineno);
+                        printSemanticError("Variable not declared",yylineno);
                         return 0;
                 }
                 entry->isUsed = true;
@@ -576,7 +573,6 @@ factor:
                 $$ = $2;
         }
         ;
-                
 
 /* Variable Declaration */
 
@@ -585,19 +581,19 @@ assignment_statement:
         {
                 SymbolTableEntry* entry = getIdEntry($1);
                 if(entry == NULL){
-                        printSemanticError("Undeclared Variable at line number ",yylineno);
+                        printSemanticError("Undeclared Variable",yylineno);
                         return 0;
                 }
                 if(entry->kind != VAR)
                 {
-                        printSemanticError("Cannot assign value to a non variable type at line number ",yylineno);
+                        printSemanticError("Cannot assign value to a non variable type",yylineno);
                         return 0;
                 }
                 int type1 = (int) entry->lexeme->type;
                 int type2 = $3.type;
                 if(!isTypeMatching(type1,type2))
                 {
-                        printSemanticError("Type mismatch in assignment statement at line number ",yylineno);
+                        printSemanticError("Type mismatch in assignment statement",yylineno);
                 }else{
                         char* temp = concatStrings($1,strdup(" := "));
                         temp = concatStrings(temp,$3.stringRep);
@@ -619,24 +615,24 @@ assignment_statement:
         {
                 SymbolTableEntry* entry = getIdEntry($1);
                 if(entry == NULL){
-                        printSemanticError("Undeclared Variable at line number ",yylineno);
+                        printSemanticError("Undeclared Variable",yylineno);
                         return 0;
                 }
                 if(entry->kind != VAR)
                 {
-                        printSemanticError("Cannot assign value to a non variable type at line number ",yylineno);
+                        printSemanticError("Cannot assign value to a non variable type",yylineno);
                         return 0;
                 }
                 if(entry->isInit == false)
                 {
-                        printSemanticError("Variable not initialized at line number ",yylineno);
+                        printSemanticError("Variable not initialized",yylineno);
                         return 0;
                 }
                 int type1 = (int)entry->lexeme->type;
                 int type2 = $3.type;
                 if((type1 != INT_TYPE && type1 != FLOAT_TYPE) || (type2 != INT_TYPE && type2 != FLOAT_TYPE))
                 {
-                        printSemanticError("Addition operation must be between 2 numbers at line number ",yylineno);
+                        printSemanticError("Addition operation must be between 2 numbers",yylineno);
                 }else{
                         char* temp = concatStrings($1,strdup(" :+= "));
                         temp = concatStrings(temp,$3.stringRep);
@@ -659,24 +655,24 @@ assignment_statement:
         {
                 SymbolTableEntry* entry = getIdEntry($1);
                 if(entry == NULL){
-                        printSemanticError("Undeclared Variable at line number ",yylineno);
+                        printSemanticError("Undeclared Variable",yylineno);
                         return 0;
                 }
                 if(entry->kind != VAR)
                 {
-                        printSemanticError("Cannot assign value to a non variable type at line number ",yylineno);
+                        printSemanticError("Cannot assign value to a non variable type",yylineno);
                         return 0;
                 }
                 if(entry->isInit == false)
                 {
-                        printSemanticError("Variable not initialized at line number ",yylineno);
+                        printSemanticError("Variable not initialized",yylineno);
                         return 0;
                 }
                 int type1 = (int)entry->lexeme->type;
                 int type2 = $3.type;
                 if((type1 != INT_TYPE && type1 != FLOAT_TYPE) || (type2 != INT_TYPE && type2 != FLOAT_TYPE))
                 {
-                        printSemanticError("Subtraction operation must be between 2 numbers at line number ",yylineno);
+                        printSemanticError("Subtraction operation must be between 2 numbers",yylineno);
                 
                 }else{
                         char* temp = concatStrings($1,strdup(" :-= "));
@@ -700,24 +696,24 @@ assignment_statement:
         {
                 SymbolTableEntry* entry = getIdEntry($1);
                 if(entry == NULL){
-                        printSemanticError("Undeclared Variable at line number ",yylineno);
+                        printSemanticError("Undeclared Variable",yylineno);
                         return 0;
                 }
                 if(entry->kind != VAR)
                 {
-                        printSemanticError("Cannot assign value to a non variable type at line number ",yylineno);
+                        printSemanticError("Cannot assign value to a non variable type",yylineno);
                         return 0;
                 }
                 if(entry->isInit == false)
                 {
-                        printSemanticError("Variable not initialized at line number ",yylineno);
+                        printSemanticError("Variable not initialized",yylineno);
                         return 0;
                 }
                 int type1 = (int)entry->lexeme->type;
                 int type2 = $3.type;
                 if((type1 != INT_TYPE && type1 != FLOAT_TYPE) || (type2 != INT_TYPE && type2 != FLOAT_TYPE))
                 {
-                        printSemanticError("Multiplication operation must be between 2 numbers at line number ",yylineno);
+                        printSemanticError("Multiplication operation must be between 2 numbers",yylineno);
                 
                 }else{
                         char* temp = concatStrings($1,strdup(" :*= "));
@@ -741,24 +737,24 @@ assignment_statement:
         {
                 SymbolTableEntry* entry = getIdEntry($1);
                 if(entry == NULL){
-                        printSemanticError("Undeclared Variable at line number ",yylineno);
+                        printSemanticError("Undeclared Variable",yylineno);
                         return 0;
                 }
                 if(entry->kind != VAR)
                 {
-                        printSemanticError("Cannot assign value to a non variable type at line number ",yylineno);
+                        printSemanticError("Cannot assign value to a non variable type",yylineno);
                         return 0;
                 }
                 if(entry->isInit == false)
                 {
-                        printSemanticError("Variable not initialized at line number ",yylineno);
+                        printSemanticError("Variable not initialized",yylineno);
                         return 0;
                 }
                 int type1 = (int) entry->lexeme->type;
                 int type2 = $3.type;
                 if((type1 != INT_TYPE && type1 != FLOAT_TYPE) || (type2 != INT_TYPE && type2 != FLOAT_TYPE))
                 {
-                        printSemanticError("Division operation must be between 2 numbers at line number ",yylineno);
+                        printSemanticError("Division operation must be between 2 numbers",yylineno);
                 
                 }else{
                         char* temp = concatStrings($1,strdup(" :/= "));
@@ -785,14 +781,14 @@ var_declaration:
          {
                 SymbolTableEntry* entry = getIdEntry($2);
                 if(entry != NULL){
-                        printSemanticError("Variable already declared at line number ",yylineno);
+                        printSemanticError("Variable already declared",yylineno);
                         return 0;
                 }
                 int type1 = $1;
                 int type2 = $4.type;
                 if(!isTypeMatching(type1,type2))
                 {
-                        printSemanticError("Type mismatch in variable declaration at line number ",yylineno);
+                        printSemanticError("Type mismatch in variable declaration",yylineno);
                 }else{
                         LexemeEntry* lexeme = new LexemeEntry;
                         lexeme->type = static_cast<VariableType>(type1);
@@ -820,7 +816,7 @@ var_declaration:
          {
                 SymbolTableEntry* entry = getIdEntry($2);
                 if(entry != NULL){
-                        printSemanticError("Variable already declared at line number ",yylineno);
+                        printSemanticError("Variable already declared",yylineno);
                         return 0;
                 }
 
@@ -835,11 +831,11 @@ var_declaration:
                 SymbolTableEntry* pointerToEnum = getIdEntry($2);
                 SymbolTableEntry* entry = getIdEntry($3);
                 if(pointerToEnum == NULL){
-                        printSemanticError("Enumerator not declared at line number ",yylineno);
+                        printSemanticError("Enumerator not declared",yylineno);
                         return 0;
                 }
                 if(entry != NULL){
-                        printSemanticError("Variable already declared at line number ",yylineno);
+                        printSemanticError("Variable already declared",yylineno);
                         return 0;
                 }
 
@@ -855,14 +851,14 @@ constant_declaration:
         {
                 SymbolTableEntry* entry = getIdEntry($3);
                 if(entry != NULL){
-                        printSemanticError("Variable already declared at line number ",yylineno);
+                        printSemanticError("Variable already declared",yylineno);
                         return 0;
                 }
                 int type1 = $2;
                 int type2 = $5.type;
                 if(!isTypeMatching(type1,type2))
                 {
-                        printSemanticError("Type mismatch in variable declaration at line number ",yylineno);
+                        printSemanticError("Type mismatch in variable declaration",yylineno);
                 }else{
                         LexemeEntry* lexeme = new LexemeEntry;
                         lexeme->type = static_cast<VariableType>(type1);
@@ -963,21 +959,21 @@ enum_initialization:
                 SymbolTableEntry* pointerToEnum = getIdEntry($2);
                 SymbolTableEntry* entry = getIdEntry($3);
                 if(pointerToEnum == NULL){
-                        printSemanticError("Enumerator not declared at line number ",yylineno);
+                        printSemanticError("Enumerator not declared",yylineno);
                         return 0;
                 }
                 if(entry != NULL){
-                        printSemanticError("Variable already declared at line number ",yylineno);
+                        printSemanticError("Variable already declared",yylineno);
                         return 0;
                 }
                 if(pointerToEnum->kind != ENUMERATOR)
                 {
-                        printSemanticError("Variable is not of enum type at line number ",yylineno);
+                        printSemanticError("Variable is not of enum type",yylineno);
                         return 0;
                 }
                 if(idExistsInEnum(pointerToEnum,$5) == false)
                 {
-                        printSemanticError("Enumerator does not contain this value at line number ",yylineno);
+                        printSemanticError("Enumerator does not contain this value",yylineno);
                         return 0;
                 }
                 LexemeEntry* lexeme = new LexemeEntry;
@@ -990,7 +986,7 @@ enum_initialization:
 enum_declaration: 	        
         ENUM IDENTIFIER OPENCURL enum_list CLOSEDCURL SEMICOLON 
         {
-
+                
         }
         | ENUM IDENTIFIER SEMICOLON
         {
@@ -1018,7 +1014,7 @@ function_prototype:
     type IDENTIFIER OPENBRACKET {
         SymbolTableEntry* entry = getIdEntry($2);
         if(entry != NULL){
-                printSemanticError("Function already declared at line number ",yylineno);
+                printSemanticError("Function already declared",yylineno);
                 return 0;
         }
         LexemeEntry* lexeme = new LexemeEntry;
@@ -1033,7 +1029,7 @@ function_prototype:
     | type IDENTIFIER OPENBRACKET {
         SymbolTableEntry* entry = getIdEntry($2);
         if(entry != NULL){
-                printSemanticError("Function already declared at line number ",yylineno);
+                printSemanticError("Function already declared",yylineno);
                 return 0;
         }
         LexemeEntry* lexeme = new LexemeEntry;
@@ -1047,7 +1043,7 @@ function_prototype:
     | VOID IDENTIFIER OPENBRACKET {
         SymbolTableEntry* entry = getIdEntry($2);
         if(entry != NULL){
-                printSemanticError("Function already declared at line number ",yylineno);
+                printSemanticError("Function already declared",yylineno);
                 return 0;
         }
         LexemeEntry* lexeme = new LexemeEntry;
@@ -1060,7 +1056,7 @@ function_prototype:
     | VOID IDENTIFIER OPENBRACKET {
         SymbolTableEntry* entry = getIdEntry($2);
         if(entry != NULL){
-                printSemanticError("Function already declared at line number ",yylineno);
+                printSemanticError("Function already declared",yylineno);
                 return 0;
         }
         LexemeEntry* lexeme = new LexemeEntry;
@@ -1078,7 +1074,7 @@ single_parameter:
         {
                 SymbolTableEntry* entry = getIdEntry($2);
                 if(entry != NULL){
-                        printSemanticError("Variable already declared at line number ",yylineno);
+                        printSemanticError("Variable already declared",yylineno);
                         return 0;
                 }
                 LexemeEntry* lexeme = new LexemeEntry;
@@ -1090,14 +1086,14 @@ single_parameter:
         {
                 SymbolTableEntry* entry = getIdEntry($2);
                 if(entry != NULL){
-                        printSemanticError("Variable already declared at line number ",yylineno);
+                        printSemanticError("Variable already declared",yylineno);
                         return 0;
                 }
                 int type1 = $1;
                 int type2 = $4.type;
                 if(!isTypeMatching(type1,type2))
                 {
-                        printSemanticError("Type mismatch in variable declaration at line number ",yylineno);
+                        printSemanticError("Type mismatch in variable declaration",yylineno);
                 }else{
                         LexemeEntry* lexeme = new LexemeEntry;
                         lexeme->type = static_cast<VariableType>(type1);
@@ -1124,12 +1120,12 @@ function_call:
         {
                 SymbolTableEntry* entry = getIdEntry($1);
                 if(entry == NULL){
-                        printSemanticError("Function not declared at line number ",yylineno);
+                        printSemanticError("Function not declared",yylineno);
                         return 0;
                 }
                 if(entry->kind != FUNC)
                 {
-                        printSemanticError("Cannot call a non function type at line number ",yylineno);
+                        printSemanticError("Cannot call a non function type",yylineno);
                         return 0;
                 }
                 $$.type = (int)entry->functionOutput;

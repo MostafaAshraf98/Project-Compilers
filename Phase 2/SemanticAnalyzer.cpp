@@ -22,7 +22,7 @@ int currentCount = 0;
 void Init()
 {
     currentSymbolTable = new SymbolTable();
-    unordered_map<char *, SymbolTableEntry *> map;
+    unordered_map<string, SymbolTableEntry *> map;
     vector<SymbolTable *> children;
     currentSymbolTable->children = children;
     currentSymbolTable->entries = map;
@@ -32,7 +32,7 @@ void Init()
 void createNewTable()
 {
     SymbolTable *newSymbolTable = new SymbolTable();
-    unordered_map<char *, SymbolTableEntry *> map;
+    unordered_map<string, SymbolTableEntry *> map;
     vector<SymbolTable *> children;
     currentSymbolTable->children = children;
     newSymbolTable->entries = map;
@@ -50,8 +50,9 @@ bool addEntryToTable(char *identifier, LexemeEntry *lexeme, Kind kind, bool isIn
     entry->isInit = isInit;
     entry->pointerToEnum = pointerToEnum;
     entry->functionOutput = functionOutput;
+    string id(identifier);
 
-    (currentSymbolTable->entries)[identifier] = entry;
+    (currentSymbolTable->entries)[id] = entry;
     return true;
 }
 
@@ -69,11 +70,12 @@ bool idExistsInEnum(SymbolTableEntry *pointerToEnum, char *identifier)
 
 SymbolTableEntry *getIdEntry(char *identifier)
 {
-    unordered_map<char *, SymbolTableEntry *> map = currentSymbolTable->entries;
+    string id(identifier);
+    unordered_map<string, SymbolTableEntry *> map = currentSymbolTable->entries;
     SymbolTable *temp = currentSymbolTable;
     while (currentSymbolTable != NULL)
     {
-        auto entry = map.find(identifier);
+        auto entry = map.find(id);
         if (entry == map.end())
         {
             currentSymbolTable = currentSymbolTable->parent;
