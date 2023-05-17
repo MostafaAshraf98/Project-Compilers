@@ -1007,7 +1007,7 @@ enum_initialization:
         }
 
 enum_declaration: 	        
-        ENUM IDENTIFIER OPENCURL enum_list CLOSEDCURL SEMICOLON 
+        ENUM IDENTIFIER OPENCURL
         {
                 SymbolTableEntry* entry = getIdEntry($2);
                 if(entry != NULL){
@@ -1018,8 +1018,9 @@ enum_declaration:
                 lexeme->type = ENUM_TYPE;
                 lexeme->stringRep = getCurrentCount();
                 addEntryToTable($2,lexeme,ENUMERATOR,true,NULL);
-                createNewTable();
         }
+         enum_list CLOSEDCURL SEMICOLON 
+
         ;
 enum_list:                      
         enum_list COMMA IDENTIFIER 
@@ -1047,6 +1048,11 @@ return_value:
                 if(currentFunction->functionOutput == VOID_TYPE)
                 {
                         printSemanticError("Function does not return a value",yylineno);
+                        return 0;
+                }
+                if(currentFunction->functionOutput != $1.type)
+                {
+                        printSemanticError("Return type does not match function output",yylineno);
                         return 0;
                 }
         }
@@ -1248,7 +1254,7 @@ call_parameters:
 int main (void)
 {
     Init();
-    const char* fileName = "./Testcases/enum (already declared).txt";
+    const char* fileName = "./Testcases/function (not a function call).txt";
     yyin = fopen(fileName, "r+");
     if (yyin == NULL)
     {

@@ -81,10 +81,11 @@ bool idExistsInEnum(SymbolTableEntry *pointerToEnum, char *identifier)
 SymbolTableEntry *getIdEntry(char *identifier)
 {
     string id(identifier);
-    unordered_map<string, SymbolTableEntry *> map = currentSymbolTable->entries;
+    unordered_map<string, SymbolTableEntry *> map;
     SymbolTable *temp = currentSymbolTable;
     while (currentSymbolTable != NULL)
     {
+        map = currentSymbolTable->entries;
         auto entry = map.find(id);
         if (entry == map.end())
         {
@@ -129,6 +130,7 @@ void convertFunctionParamsToStack(SymbolTableEntry *currentFunc)
          functionParameters.push(currentFunc->functionInput[i]);
     }
 }
+
 
 void traverseSymbolTable(SymbolTable *table, int level, ofstream &outputFile)
 {
