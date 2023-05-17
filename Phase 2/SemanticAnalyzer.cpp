@@ -20,13 +20,14 @@ void createNewTable()
     currentSymbolTable = newSymbolTable;
 }
 
-bool addEntryToTable(char *identifier, LexemeEntry *lexeme, Kind kind, bool isInit, SymbolTableEntry *pointerToEnum = NULL)
+bool addEntryToTable(char *identifier, LexemeEntry *lexeme, Kind kind, bool isInit, SymbolTableEntry *pointerToEnum = NULL, VariableType functionOutput = VOID_TYPE)
 {
     SymbolTableEntry *entry = new SymbolTableEntry();
     entry->lexeme = lexeme;
     entry->kind = kind;
     entry->isInit = isInit;
     entry->pointerToEnum = pointerToEnum;
+    entry->functionOutput = functionOutput;
 
     (currentSymbolTable->entries)[identifier] = entry;
     return true;

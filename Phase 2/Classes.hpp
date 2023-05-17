@@ -31,7 +31,6 @@ struct LexemeEntry{
         char* stringVal;
         bool boolVal;
         char charVal;
-        unordered_map<char*, int> enumValues;
 };
 
 class SymbolTableEntry{
@@ -40,7 +39,6 @@ class SymbolTableEntry{
         Kind kind;
         bool isInit = false;
         bool isUsed = false;
-        vector<VariableType> functionInputs;
         VariableType functionOutput;
         SymbolTableEntry* pointerToEnum = NULL;
 };

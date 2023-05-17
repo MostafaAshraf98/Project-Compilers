@@ -27,6 +27,7 @@
 
         /* Rules types */
 %type<varType> type
+%type<varType> return_value
 %type<lexeme> value
 %type<lexeme> constant
 %type<lexeme> expression
@@ -36,7 +37,6 @@
 %type<lexeme> binary_expression
 %type<lexeme> term
 %type<lexeme> factor
-/* %type<lexeme> return_value */
 %type<lexeme> function_call 
 
 
@@ -958,28 +958,150 @@ case_statement:
 
 enum_statement: 		enum_declaration | enum_initialization
 enum_initialization: 	        ENUM IDENTIFIER IDENTIFIER EQUAL IDENTIFIER SEMICOLON
-enum_declaration: 	        ENUM IDENTIFIER OPENCURL enum_list CLOSEDCURL SEMICOLON | ENUM IDENTIFIER SEMICOLON | CONST ENUM IDENTIFIER SEMICOLON
-enum_list:                      enum_val | ;
-enum_val:                       enum_val COMMA IDENTIFIER | enum_val COMMA IDENTIFIER EQUAL INT_VAL |  IDENTIFIER EQUAL INT_VAL |IDENTIFIER ;
+enum_declaration: 	        ENUM IDENTIFIER OPENCURL enum_list CLOSEDCURL SEMICOLON | ENUM IDENTIFIER SEMICOLON
+enum_list:                      enum_list COMMA IDENTIFIER |IDENTIFIER  ;
 
 /* Function Declaration */
 
-function: 			function_prototype statement
+function: 			function_prototype OPENCURL statements CLOSEDCURL {exitCurrentScope();}
 						
-return_value: 			value | ;
+return_value: 			
+        value
+        {
+          $$ = $1.type;
+        }
+         | 
+        {
+          $$ = VOID_TYPE;
+        };
 
-function_prototype:		
-    type IDENTIFIER OPENBRACKET parameters CLOSEDBRACKET 
-    | type IDENTIFIER OPENBRACKET CLOSEDBRACKET
-    | VOID IDENTIFIER OPENBRACKET parameters CLOSEDBRACKET
-    | VOID IDENTIFIER OPENBRACKET CLOSEDBRACKET
+function_prototype:	
+
+    type IDENTIFIER OPENBRACKET {
+        SymbolTableEntry* entry = getIdEntry($2);
+        if(entry != NULL){
+                printSemanticError("Function already declared at line number ",yylineno);
+                return 0;
+        }
+        LexemeEntry* lexeme = new LexemeEntry;
+        lexeme->type = static_cast<VariableType>($1);
+        lexeme->stringRep = getCurrentCount();
+        VariableType functionOutput = static_cast<VariableType>($1);
+        addEntryToTable($2,lexeme,FUNC,false,NULL, functionOutput);
+        createNewTable();
+
+        } parameters CLOSEDBRACKET
+
+    | type IDENTIFIER OPENBRACKET {
+        SymbolTableEntry* entry = getIdEntry($2);
+        if(entry != NULL){
+                printSemanticError("Function already declared at line number ",yylineno);
+                return 0;
+        }
+        LexemeEntry* lexeme = new LexemeEntry;
+        lexeme->type = static_cast<VariableType>($1);
+        lexeme->stringRep = getCurrentCount();
+        VariableType functionOutput = static_cast<VariableType>($1);
+        addEntryToTable($2,lexeme,FUNC,false,NULL, functionOutput);
+        createNewTable();
+        } CLOSEDBRACKET
+
+    | VOID IDENTIFIER OPENBRACKET {
+        SymbolTableEntry* entry = getIdEntry($2);
+        if(entry != NULL){
+                printSemanticError("Function already declared at line number ",yylineno);
+                return 0;
+        }
+        LexemeEntry* lexeme = new LexemeEntry;
+        lexeme->type = VOID_TYPE;
+        lexeme->stringRep = getCurrentCount();
+        addEntryToTable($2,lexeme,FUNC,false,NULL, VOID_TYPE);
+        createNewTable();
+        } parameters CLOSEDBRACKET
+
+    | VOID IDENTIFIER OPENBRACKET {
+        SymbolTableEntry* entry = getIdEntry($2);
+        if(entry != NULL){
+                printSemanticError("Function already declared at line number ",yylineno);
+                return 0;
+        }
+        LexemeEntry* lexeme = new LexemeEntry;
+        lexeme->type = VOID_TYPE;
+        lexeme->stringRep = getCurrentCount();
+        addEntryToTable($2,lexeme,FUNC,false,NULL, VOID_TYPE);
+        createNewTable();
+        } CLOSEDBRACKET
     ;
 
 parameters: 			parameters COMMA single_parameter | single_parameter ;
 
-single_parameter: 		type IDENTIFIER | type IDENTIFIER EQUAL constant ;
+single_parameter: 		
+        type IDENTIFIER
+        {
+                SymbolTableEntry* entry = getIdEntry($2);
+                if(entry != NULL){
+                        printSemanticError("Variable already declared at line number ",yylineno);
+                        return 0;
+                }
+                LexemeEntry* lexeme = new LexemeEntry;
+                lexeme->type = static_cast<VariableType>($1);
+                lexeme->stringRep = getCurrentCount();
+                addEntryToTable($2,lexeme,PARAM,true);
+        } 
+        | type IDENTIFIER EQUAL constant 
+        {
+                SymbolTableEntry* entry = getIdEntry($2);
+                if(entry != NULL){
+                        printSemanticError("Variable already declared at line number ",yylineno);
+                        return 0;
+                }
+                int type1 = $1;
+                int type2 = $4.type;
+                if(!isTypeMatching(type1,type2))
+                {
+                        printSemanticError("Type mismatch in variable declaration at line number ",yylineno);
+                }else{
+                        LexemeEntry* lexeme = new LexemeEntry;
+                        lexeme->type = static_cast<VariableType>(type1);
+                        lexeme->stringRep = getCurrentCount();
+                        if(type1 == INT_TYPE && type2 == FLOAT_TYPE)
+                        {
+                                lexeme->intVal = (int)$4.floatVal;
+                        }else if (type1 == FLOAT_TYPE && type2 == INT_TYPE)
+                        {
+                                lexeme->floatVal = (float)$4.intVal;
+                        }else{
+                                lexeme->intVal = $4.intVal;
+                                lexeme->floatVal = $4.floatVal;
+                                lexeme->stringVal = $4.stringVal;
+                                lexeme->boolVal = $4.boolVal;
+                                lexeme->charVal = $4.charVal;
+                        }
+                        addEntryToTable($2,lexeme,PARAM,true);
+                }
+        };
 
-function_call: 			IDENTIFIER OPENBRACKET call_parameters CLOSEDBRACKET ;
+function_call: 			
+        IDENTIFIER OPENBRACKET call_parameters CLOSEDBRACKET
+        {
+                SymbolTableEntry* entry = getIdEntry($1);
+                if(entry == NULL){
+                        printSemanticError("Function not declared at line number ",yylineno);
+                        return 0;
+                }
+                if(entry->kind != FUNC)
+                {
+                        printSemanticError("Cannot call a non function type at line number ",yylineno);
+                        return 0;
+                }
+                $$.type = (int)entry->functionOutput;
+                $$.stringRep = $1;
+                $$.intVal = entry->lexeme->intVal;
+                $$.floatVal = entry->lexeme->floatVal;
+                $$.stringVal = entry->lexeme->stringVal;
+                $$.boolVal = entry->lexeme->boolVal;
+                $$.charVal = entry->lexeme->charVal;
+        };
 
 call_parameters:		call_parameter |;
 

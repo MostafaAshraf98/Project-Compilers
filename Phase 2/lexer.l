@@ -122,7 +122,7 @@ int yylex();
                                     yylval.lexeme.type = INT_TYPE;
                                     yylval.lexeme.stringRep = strdup(yytext);
 
-                                    return INT;                               
+                                    return INT_VAL;                               
                                 }
         /* FLOAT VALUE*/
 [0-9]+[\.][0-9]+                {
@@ -130,7 +130,7 @@ int yylex();
                                     yylval.lexeme.type = FLOAT_TYPE;
                                     yylval.lexeme.stringRep = strdup(yytext);
 
-                                    return FLOAT;                                 
+                                    return FLOAT_VAL;                                 
                                 } 
 
         /* STRING VALUE   */
@@ -139,7 +139,7 @@ int yylex();
                                     yylval.lexeme.type = STRING_TYPE;
                                     yylval.lexeme.stringRep = strdup(yytext);
 
-                                    return STRING;
+                                    return STRING_VAL;
                                 }
         /* CHAR VALUE*/
 ['][a-zA-Z0-9][']              {   
@@ -147,7 +147,7 @@ int yylex();
                                     yylval.lexeme.type = CHAR_TYPE;
                                     yylval.lexeme.stringRep = strdup(yytext);
 
-                                    return CHAR;
+                                    return CHAR_VAL;
                                 }
         /* IDENTIFIER VALUE*/
 [a-zA-Z][_a-zA-Z0-9]*           {   
