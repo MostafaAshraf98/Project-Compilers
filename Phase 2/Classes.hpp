@@ -47,10 +47,10 @@ class SymbolTableEntry{
 
 class SymbolTable
 {
-public:
-    unordered_map<char*, SymbolTableEntry*> entries;
-    SymbolTable* parent = NULL;
-    vector<SymbolTable *> children;
+    public:
+        unordered_map<char*, SymbolTableEntry*> entries;
+        SymbolTable* parent = NULL;
+        vector<SymbolTable *> children;
 };
 
 #endif // CLASSES_H

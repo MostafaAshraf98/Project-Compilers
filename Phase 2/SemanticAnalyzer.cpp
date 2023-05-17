@@ -1,7 +1,7 @@
 #ifndef SEMANTICANALYZER_H
 #define SEMANTICANALYZER_H
 
-#include "Classes.h"
+#include "Classes.hpp"
 #include<string>
 #include <cstring>
 using namespace std;
@@ -74,7 +74,7 @@ bool isTypeMatching(VariableType type1, VariableType type2)
 
 void printSemanticError(string error, int lineNo)
 {
-    fprintf(semanticFile, "%s At Line Number %d\n", lineNo, error.c_str());
+    fprintf(semanticFile, "%s At Line Number %d\n",error.c_str(), lineNo);
     exit(0);
 }
 

@@ -3,16 +3,16 @@
 all: program.exe
 
 lexer.cpp: lexer.l
-	flex++ -o lexer.cpp lexer.l
+	flex -o lexer.c lexer.l
 
 parser.cpp: parser.y
-	bison --language=C++ -d -o parser.cpp parser.y
+	bison -d -o parser.c parser.y
 
 program.exe: lexer.cpp parser.cpp
-	g++ -o program.exe lexer.cpp parser.cpp
+	g++ -o program.exe lexer.c parser.c
 
 clean:
-	rm -f lexer.cpp parser.cpp parser.hpp parser.output program.exe lex.yy.cc lex.yy.cpp parser.tab.cpp parser.tab.hpp stack.hh
+	rm -f lexer.c parser.c parser.h lexer.cpp parser.cpp parser.hpp parser.output program.exe
 
 run: program.exe
 	./program.exe

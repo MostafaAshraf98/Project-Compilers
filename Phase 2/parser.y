@@ -2,7 +2,7 @@
 	#include <stdio.h>
 	#include <stdlib.h>
 	#include <stdarg.h>
-        #include "SemanticAnalyzer.h"
+        #include "SemanticAnalyzer.cpp"
 	extern FILE *yyin;
 	extern int yylineno; /* Line Number tacker from lexer */
 	extern int yylex(); 
@@ -27,8 +27,8 @@ char* stringValue;
 %type<lexeme> binary_expression
 %type<lexeme> term
 %type<lexeme> factor
-%type<lexeme> return_value
-%type<lexeme> function_call
+/* %type<lexeme> return_value */
+%type<lexeme> function_call 
 
 
 
@@ -144,9 +144,9 @@ statements :
 
 statement : 
 	
-	expression SEMICOLON 	{printf("Expression statement\n")}		
-	| assignment_statement	{printf("Assignment Statement \n")}	
-	| var_declaration 	{printf("Variable declaration\n")}			
+	expression SEMICOLON 
+	| assignment_statement
+	| var_declaration 
 	| constant_declaration			
         | enum_statement                 
 	| if_statement						
@@ -156,7 +156,7 @@ statement :
         | switch_statement
 	| function							
 	| OPENCURL {createNewTable();} statements CLOSEDCURL {exitCurrentScope();}
-	| RETURN return_value SEMICOLON         {printf("Return statement\n")}
+	| RETURN return_value SEMICOLON
         | SEMICOLON
 	;
 
@@ -889,34 +889,34 @@ constant_declaration:
 /* If statement */
 
 if_statement: 
-        IF OPENBRACKET value { checkIfLexemIsBool($3,yylineno)}  CLOSEDBRACKET OPENCURL {createNewTable()} statements CLOSEDCURL {exitCurrentScope()} else_if_statement else_statement  {printf("If then statement\n");}
+        IF OPENBRACKET value { checkIfLexemIsBool($3,yylineno);}  CLOSEDBRACKET OPENCURL {createNewTable();} statements CLOSEDCURL {exitCurrentScope();} else_if_statement else_statement 
 	;
 
 else_statement: 
-        ELSE OPENCURL {createNewTable()} statements CLOSEDCURL {exitCurrentScope()} {printf("If then else statement\n");}
+        ELSE OPENCURL {createNewTable();} statements CLOSEDCURL {exitCurrentScope();}
         |
         ;
 else_if_statement:
-        else_if_statement ELSEIF OPENBRACKET  value { checkIfLexemIsBool($4,yylineno)} CLOSEDBRACKET OPENCURL {createNewTable()} statements CLOSEDCURL {exitCurrentScope()} 
+        else_if_statement ELSEIF OPENBRACKET  value { checkIfLexemIsBool($4,yylineno);} CLOSEDBRACKET OPENCURL {createNewTable();} statements CLOSEDCURL {exitCurrentScope();} 
         | 
         ;
 
 /* While statement */
 
 while_statement:
-		WHILE  OPENBRACKET value { checkIfLexemIsBool($3,yylineno)} CLOSEDBRACKET statement   {printf("while loop\n");}
+		WHILE  OPENBRACKET value { checkIfLexemIsBool($3,yylineno);} CLOSEDBRACKET statement  
 		;
 
 /* Do while statement */
 
 do_while_statement:
-	DO statement WHILE OPENBRACKET value { checkIfLexemIsBool($5,yylineno)} CLOSEDBRACKET SEMICOLON  {printf("do-while loop\n");}
+	DO statement WHILE OPENBRACKET value { checkIfLexemIsBool($5,yylineno);} CLOSEDBRACKET SEMICOLON 
 	;
 
 /* For statement */
 
 for_statement:
-	FOR {createNewTable()} OPENBRACKET for_initialization value { checkIfLexemIsBool($5,yylineno)} SEMICOLON for_expression CLOSEDBRACKET OPENCURL statements CLOSEDCURL {exitCurrentScope()} {printf("for loop\n");}
+	FOR {createNewTable();} OPENBRACKET for_initialization value { checkIfLexemIsBool($5,yylineno);} SEMICOLON for_expression CLOSEDBRACKET OPENCURL statements CLOSEDCURL {exitCurrentScope();}
 	;
 
 for_initialization:
@@ -940,7 +940,7 @@ for_expression:
 /* Switch statement */
 
 switch_statement:
-    SWITCH OPENBRACKET value CLOSEDBRACKET OPENCURL {createNewTable()}  case_list CLOSEDCURL {exitCurrentScope()} {printf("switch case\n");}
+    SWITCH OPENBRACKET value CLOSEDBRACKET OPENCURL {createNewTable();}  case_list CLOSEDCURL {exitCurrentScope();}
     ;
 
 case_list:
@@ -955,15 +955,15 @@ case_statement:
 
 /* Enums */
 
-enum_statement: 		enum_declaration | enum_initialization {printf("Enum statement\n")};
-enum_initialization: 	        ENUM IDENTIFIER IDENTIFIER EQUAL IDENTIFIER SEMICOLON {printf("Enum initialization\n")};
-enum_declaration: 	        ENUM IDENTIFIER OPENCURL enum_list CLOSEDCURL SEMICOLON | ENUM IDENTIFIER SEMICOLON | CONST ENUM IDENTIFIER SEMICOLON {printf("Enum declaration\n")};
+enum_statement: 		enum_declaration | enum_initialization
+enum_initialization: 	        ENUM IDENTIFIER IDENTIFIER EQUAL IDENTIFIER SEMICOLON
+enum_declaration: 	        ENUM IDENTIFIER OPENCURL enum_list CLOSEDCURL SEMICOLON | ENUM IDENTIFIER SEMICOLON | CONST ENUM IDENTIFIER SEMICOLON
 enum_list:                      enum_val | ;
 enum_val:                       enum_val COMMA IDENTIFIER | enum_val COMMA IDENTIFIER EQUAL INT_VAL |  IDENTIFIER EQUAL INT_VAL |IDENTIFIER ;
 
 /* Function Declaration */
 
-function: 			function_prototype statement {printf("Function Definition\n");};
+function: 			function_prototype statement
 						
 return_value: 			value | ;
 
