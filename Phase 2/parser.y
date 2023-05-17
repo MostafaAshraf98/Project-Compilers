@@ -1017,7 +1017,6 @@ enum_declaration:
                 LexemeEntry* lexeme = new LexemeEntry;
                 lexeme->type = ENUM_TYPE;
                 lexeme->stringRep = getCurrentCount();
-                currentEnum = entry;
                 addEntryToTable($2,lexeme,ENUMERATOR,true,NULL);
                 createNewTable();
         }
@@ -1249,7 +1248,8 @@ call_parameters:
 int main (void)
 {
     Init();
-    yyin = fopen("test.txt", "r+");
+    const char* fileName = "./Testcases/enum (already declared).txt";
+    yyin = fopen(fileName, "r+");
     if (yyin == NULL)
     {
         printf("File Not Found\n");
@@ -1258,7 +1258,7 @@ int main (void)
     {
         printf("====== Test File =====\n\n");
         FILE* testFile; char ch;
-        testFile = fopen("test.txt","r");
+        testFile = fopen(fileName,"r");
         while((ch=fgetc(testFile))!=EOF)
         {
             printf("%c",ch);

@@ -54,9 +54,13 @@ bool addEntryToTable(char *identifier, LexemeEntry *lexeme, Kind kind, bool isIn
     entry->isInit = isInit;
     entry->pointerToEnum = pointerToEnum;
     entry->functionOutput = functionOutput;
+    entry->functionInput = vector<VariableType>();
+    entry->enumValues = vector<char*>();
     string id(identifier);
     if(kind == FUNC)
         currentFunction = entry;
+    if(kind == ENUMERATOR)
+        currentEnum = entry;
 
     (currentSymbolTable->entries)[id] = entry;
     return true;
