@@ -861,7 +861,7 @@ var_declaration:
                         printSemanticError("Variable already declared",yylineno);
                         return 0;
                 }
-
+                pointerToEnum->isUsed = true;
                 LexemeEntry* lexeme = new LexemeEntry;
                 lexeme->type = ENUM_TYPE;
                 lexeme->stringRep = getCurrentCount();
@@ -992,6 +992,7 @@ case_statement:
 /* Enums */
 
 enum_statement: 		enum_declaration | enum_initialization
+
 enum_initialization: 	        
         ENUM IDENTIFIER IDENTIFIER EQUAL IDENTIFIER SEMICOLON
         {
@@ -1015,6 +1016,7 @@ enum_initialization:
                         printSemanticError("Enumerator does not contain this value",yylineno);
                         return 0;
                 }
+                pointerToEnum->isUsed = true;
                 LexemeEntry* lexeme = new LexemeEntry;
                 lexeme->type = ENUM_TYPE;
                 lexeme->stringRep = getCurrentCount();
@@ -1036,7 +1038,6 @@ enum_declaration:
                 addEntryToTable($2,lexeme,ENUMERATOR,true,NULL);
         }
          enum_list CLOSEDCURL SEMICOLON 
-
         ;
 enum_list:                      
         enum_list COMMA IDENTIFIER 
