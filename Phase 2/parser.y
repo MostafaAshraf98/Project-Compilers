@@ -604,19 +604,29 @@ assignment_statement:
                 if(entry->lexeme->type == ENUM_TYPE)
                 {
                         SymbolTableEntry* pointerToEnum = entry->pointerToEnum;
-                        if(pointerToEnum->isInit == false)
+                        SymbolTableEntry* targetEnum = getIdEntry($3.stringRep);
+                        if(idExistsInEnum(pointerToEnum,$3.stringRep) == true || (targetEnum !=NULL && targetEnum->lexeme->type == ENUM_TYPE && targetEnum->isInit == true))
                         {
-                                printSemanticError("Enum not initialized",yylineno);
-                                return 0;
+                                pointerToEnum->isUsed = true;
+
+                                entry->isInit = true;
+
+                                if(targetEnum != NULL)
+                                        entry->lexeme->stringVal = targetEnum->lexeme->stringVal;
+                                else
+                                        entry->lexeme->stringVal = $3.stringRep;
                         }
-                        
-                        if(idExistsInEnum(pointerToEnum,$3.stringRep) == false)
-                        {
-                                printSemanticError("Enum value not defined",yylineno);
-                                return 0;
+                        else{
+                        if(targetEnum == NULL)
+                                printSemanticError("Undeclared Identifier",yylineno);
+                        else if(targetEnum->lexeme->type != ENUM_TYPE)
+                                printSemanticError("Type mismatch",yylineno);
+                        else if (targetEnum->isInit == false)
+                                printSemanticError("Use of Uninitialized Identifier",yylineno);
+                        else if(idExistsInEnum(pointerToEnum,$5) == false)
+                                printSemanticError("Enumerator does not contain this value",yylineno);
                         }
-                        entry->lexeme->stringVal = $3.stringRep;
-                        entry->isInit = true;
+
                         return 0;
                 }
                 int type1 = (int) entry->lexeme->type;
@@ -872,8 +882,7 @@ var_declaration:
                 LexemeEntry* lexeme = new LexemeEntry;
                 lexeme->type = ENUM_TYPE;
                 lexeme->stringRep = getCurrentCount();
-                addEntryToTable($2,lexeme,VAR,false,pointerToEnum);
-        
+                addEntryToTable($3,lexeme,VAR,false,pointerToEnum);
          }
 
 constant_declaration: 	
@@ -1021,17 +1030,32 @@ enum_initialization:
                         printSemanticError("Variable is not of enum type",yylineno);
                         return 0;
                 }
-                if(idExistsInEnum(pointerToEnum,$5) == false)
+                SymbolTableEntry* targetEnum = getIdEntry($5);
+                if(idExistsInEnum(pointerToEnum,$5) == true || (targetEnum !=NULL && targetEnum->lexeme->type == ENUM_TYPE && targetEnum->isInit == true))
                 {
-                        printSemanticError("Enumerator does not contain this value",yylineno);
-                        return 0;
+                        pointerToEnum->isUsed = true;
+                        LexemeEntry* lexeme = new LexemeEntry;
+                        lexeme->type = ENUM_TYPE;
+                        lexeme->stringRep = getCurrentCount();
+                        if(targetEnum != NULL)
+                        {
+                                lexeme->stringVal = targetEnum->lexeme->stringVal;
+                        }else{
+                                lexeme->stringVal = $5;
+                        }
+                        addEntryToTable($3,lexeme,VAR,true,pointerToEnum);
                 }
-                pointerToEnum->isUsed = true;
-                LexemeEntry* lexeme = new LexemeEntry;
-                lexeme->type = ENUM_TYPE;
-                lexeme->stringRep = getCurrentCount();
-                lexeme->stringVal = $5;
-                addEntryToTable($3,lexeme,VAR,true,pointerToEnum);
+                else{
+                        if(targetEnum == NULL)
+                                printSemanticError("Undeclared Identifier",yylineno);
+                        else if(targetEnum->lexeme->type != ENUM_TYPE)
+                                printSemanticError("Type mismatch",yylineno);
+                        else if (targetEnum->isInit == false)
+                                printSemanticError("Use of Uninitialized Identifier",yylineno);
+                        else if(idExistsInEnum(pointerToEnum,$5) == false)
+                                printSemanticError("Enumerator does not contain this value",yylineno);
+                }
+
         }
 
 enum_declaration: 	        
@@ -1282,7 +1306,7 @@ call_parameters:
 int main (void)
 {
     Init();
-    const char* fileName = "./Testcases/noError.txt";
+    const char* fileName = "./Testcases/enums (no error).txt";
     yyin = fopen(fileName, "r+");
     if (yyin == NULL)
     {
