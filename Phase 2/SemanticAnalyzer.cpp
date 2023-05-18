@@ -36,9 +36,10 @@ void Init()
 void createNewTable()
 {
     SymbolTable *newSymbolTable = new SymbolTable();
+    
     unordered_map<string, SymbolTableEntry *> map;
     vector<SymbolTable *> children;
-    currentSymbolTable->children = children;
+    newSymbolTable->children = children;
     newSymbolTable->entries = map;
 
     newSymbolTable->parent = currentSymbolTable;
