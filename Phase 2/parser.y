@@ -618,12 +618,12 @@ assignment_statement:
                         }
                         else{
                         if(targetEnum == NULL)
-                                printSemanticError("Undeclared Identifier",yylineno);
+                                printSemanticError("Enumerator cannot be assigned this value",yylineno);
                         else if(targetEnum->lexeme->type != ENUM_TYPE)
                                 printSemanticError("Type mismatch",yylineno);
                         else if (targetEnum->isInit == false)
                                 printSemanticError("Use of Uninitialized Identifier",yylineno);
-                        else if(idExistsInEnum(pointerToEnum,$5) == false)
+                        else if(idExistsInEnum(pointerToEnum,$3.stringRep) == false)
                                 printSemanticError("Enumerator does not contain this value",yylineno);
                         }
 
