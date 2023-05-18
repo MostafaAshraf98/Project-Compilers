@@ -132,6 +132,29 @@ void convertFunctionParamsToStack(SymbolTableEntry *currentFunc)
     }
 }
 
+bool idExistsInAnEnum(SymbolTable* table, char* id)
+{
+    for(auto entry : table->entries)
+    {
+        if(entry.second->kind == ENUMERATOR)
+        {
+            if(idExistsInEnum(entry.second, id))
+            {
+                return true;
+            }
+        }
+    }
+    for(auto child : table->children)
+    {
+        if (idExistsInAnEnum(child, id))
+        {
+            return true;
+        }
+    }
+    return false;
+    
+}
+
 void traverseSymbolTable(SymbolTable *table, int level, ofstream &outputFile)
 {
     outputFile << std::setw(level * 4) << ""
