@@ -167,11 +167,11 @@ statement :
 
 /* Values & Types*/
 
-value: expression | STRING_VAL;
+value: expression | STRING_VAL | CHAR_VAL;
 
 type:  INT | FLOAT | CHAR | STRING | BOOL;
 
-constant: INT_VAL | FLOAT_VAL | STRING_VAL | TRUE_VAL | FALSE_VAL;
+constant: INT_VAL | FLOAT_VAL | STRING_VAL | TRUE_VAL | FALSE_VAL | CHAR_VAL;
 
 /* Expression */
 
@@ -1272,7 +1272,7 @@ call_parameters:
 int main (void)
 {
     Init();
-    const char* fileName = "./Testcases/WarningIfConditionAlwaysFalse.txt";
+    const char* fileName = "./Testcases/typeDifference.txt";
     yyin = fopen(fileName, "r+");
     if (yyin == NULL)
     {
