@@ -915,7 +915,7 @@ if_statement:
                 char* temp = $3.stringRep;
                 SymbolTableEntry* entry = getIdEntry(temp);
                 if(entry != NULL && entry->kind !=PARAM && $3.boolVal == false)
-                        printSemanticWarning("Condition is always false",yylineno);
+                        printSemanticWarning("Warning: Condition is always false",yylineno);
                 
         }  CLOSEDBRACKET OPENCURL {createNewTable();} statements CLOSEDCURL {exitCurrentScope();} else_if_statement else_statement 
 	;
@@ -1272,7 +1272,7 @@ call_parameters:
 int main (void)
 {
     Init();
-    const char* fileName = "./Testcases/outOfScope.txt";
+    const char* fileName = "./Testcases/WarningIfConditionAlwaysFalse.txt";
     yyin = fopen(fileName, "r+");
     if (yyin == NULL)
     {
