@@ -26,6 +26,10 @@ int yylex();
 "/="                            return DIV_EQ;
 "++"                            return INC;
 "--"                            return DEC;
+ 
+        /*Break and Continue*/
+"break"                         return BREAK;
+"continue"                      return CONTINUE;
    
         /* Comparison Op */
 "<"				return LT;

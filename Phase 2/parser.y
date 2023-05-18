@@ -57,6 +57,11 @@
         /* Constant */
 %token CONST
 
+        /* Break and Continue */
+
+%token BREAK
+%token CONTINUE
+
         /* Mathematical Expressions */
 %token PLUS
 %token MINUS
@@ -159,7 +164,9 @@ statement :
 	| do_while_statement                
 	| for_statement                     
         | switch_statement
-	| function							
+	| function
+        | break_statement
+        | continue_statement
 	| OPENCURL {createNewTable();} statements CLOSEDCURL {exitCurrentScope();}
 	| RETURN return_value SEMICOLON
         | SEMICOLON
@@ -936,6 +943,9 @@ else_if_statement:
         } CLOSEDBRACKET OPENCURL {createNewTable();} statements CLOSEDCURL {exitCurrentScope();} 
         | 
         ;
+/* break and continue statements */
+break_statement: BREAK SEMICOLON;
+continue_statement: CONTINUE SEMICOLON;
 
 /* While statement */
 
@@ -1272,7 +1282,7 @@ call_parameters:
 int main (void)
 {
     Init();
-    const char* fileName = "./Testcases/typeDifference.txt";
+    const char* fileName = "./Testcases/noError.txt";
     yyin = fopen(fileName, "r+");
     if (yyin == NULL)
     {
