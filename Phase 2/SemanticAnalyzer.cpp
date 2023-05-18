@@ -131,19 +131,20 @@ void convertFunctionParamsToStack(SymbolTableEntry *currentFunc)
     }
 }
 
-
 void traverseSymbolTable(SymbolTable *table, int level, ofstream &outputFile)
 {
     outputFile << std::setw(level * 4) << ""
                << "Identifier"
                << std::setw(12) << "Level"
                << std::setw(12) << "Kind"
-               << std::setw(12) << "Type" << std::endl;
+               << std::setw(12) << "Type"
+               << std::setw(18) << "Value" << std::endl;
     outputFile << std::setw(level * 4) << ""
                << "----------"
                << std::setw(12) << "-----"
                << std::setw(12) << "----"
-               << std::setw(12) << "----" << std::endl;
+               << std::setw(12) << "----"
+               << std::setw(18) << "----" << std::endl;
 
     // Print table entries
     for (const auto &entry : table->entries)
@@ -176,18 +177,23 @@ void traverseSymbolTable(SymbolTable *table, int level, ofstream &outputFile)
         {
         case INT_TYPE:
             outputFile << std::setw(16) << "INT_TYPE";
+            outputFile << std::setw(15) << lexeme->intVal;
             break;
         case FLOAT_TYPE:
             outputFile << std::setw(16) << "FLOAT_TYPE";
+            outputFile << std::setw(15) << lexeme->floatVal;
             break;
         case STRING_TYPE:
             outputFile << std::setw(16) << "STRING_TYPE";
+            outputFile << std::setw(15) << lexeme->stringVal;
             break;
         case BOOL_TYPE:
             outputFile << std::setw(16) << "BOOL_TYPE";
+            outputFile << std::setw(15) << lexeme->boolVal;
             break;
         case CHAR_TYPE:
             outputFile << std::setw(16) << "CHAR_TYPE";
+            outputFile << std::setw(15) << lexeme->charVal;
             break;
         case VOID_TYPE:
             outputFile << std::setw(16) << "VOID_TYPE";

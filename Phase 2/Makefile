@@ -15,4 +15,4 @@ clean:
 	rm -f lexer.c parser.c parser.h lexer.cpp parser.cpp parser.hpp parser.output program.exe semantic-error.txt syntax-error.txt quadruple.txt symbol-tables.txt
 
 run: clean program.exe
-	 gdb ./program.exe
+	./program.exe

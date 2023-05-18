@@ -1254,7 +1254,7 @@ call_parameters:
 int main (void)
 {
     Init();
-    const char* fileName = "./Testcases/function (not a function call).txt";
+    const char* fileName = "./Testcases/expressions(No error).txt";
     yyin = fopen(fileName, "r+");
     if (yyin == NULL)
     {
