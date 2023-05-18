@@ -1210,6 +1210,7 @@ function_call:
                         printSemanticError("Cannot call a non function type",yylineno);
                         return 0;
                 }
+                entry->isUsed = true;
                 convertFunctionParamsToStack(entry);
         }call_parameters CLOSEDBRACKET
         {
@@ -1270,8 +1271,7 @@ call_parameters:
 int main (void)
 {
     Init();
-    /* const char* fileName = "./Testcases/expressions(No error).txt"; */
-    const char* fileName = "test.txt";
+    const char* fileName = "./Testcases/outOfScope.txt";
     yyin = fopen(fileName, "r+");
     if (yyin == NULL)
     {
