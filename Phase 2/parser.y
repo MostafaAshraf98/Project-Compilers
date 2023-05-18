@@ -802,7 +802,7 @@ assignment_statement:
 var_declaration:        
          type IDENTIFIER EQUAL value SEMICOLON
          {
-                SymbolTableEntry* entry = getIdEntry($2);
+                SymbolTableEntry* entry = checkIfIdExistsInCurrentScope($2);
                 if(entry != NULL){
                         printSemanticError("Variable already declared",yylineno);
                         return 0;
@@ -837,7 +837,7 @@ var_declaration:
          }
         | type IDENTIFIER SEMICOLON
          {
-                SymbolTableEntry* entry = getIdEntry($2);
+                SymbolTableEntry* entry = checkIfIdExistsInCurrentScope($2);
                 if(entry != NULL){
                         printSemanticError("Variable already declared",yylineno);
                         return 0;
@@ -852,7 +852,7 @@ var_declaration:
         | ENUM IDENTIFIER IDENTIFIER SEMICOLON
          {
                 SymbolTableEntry* pointerToEnum = getIdEntry($2);
-                SymbolTableEntry* entry = getIdEntry($3);
+                SymbolTableEntry* entry = checkIfIdExistsInCurrentScope($3);
                 if(pointerToEnum == NULL){
                         printSemanticError("Enumerator not declared",yylineno);
                         return 0;
@@ -872,7 +872,7 @@ var_declaration:
 constant_declaration: 	
         CONST type IDENTIFIER EQUAL value SEMICOLON  
         {
-                SymbolTableEntry* entry = getIdEntry($3);
+                SymbolTableEntry* entry = checkIfIdExistsInCurrentScope($3);
                 if(entry != NULL){
                         printSemanticError("Variable already declared",yylineno);
                         return 0;
@@ -909,7 +909,15 @@ constant_declaration:
 /* If statement */
 
 if_statement: 
-        IF OPENBRACKET value { checkIfLexemIsBool($3.type != BOOL_TYPE,yylineno);}  CLOSEDBRACKET OPENCURL {createNewTable();} statements CLOSEDCURL {exitCurrentScope();} else_if_statement else_statement 
+        IF OPENBRACKET value 
+        { 
+                checkIfLexemIsBool($3.type != BOOL_TYPE,yylineno);
+                char* temp = $3.stringRep;
+                SymbolTableEntry* entry = getIdEntry(temp);
+                if(entry != NULL && entry->kind !=PARAM && $3.boolVal == false)
+                        printSemanticWarning("Condition is always false",yylineno);
+                
+        }  CLOSEDBRACKET OPENCURL {createNewTable();} statements CLOSEDCURL {exitCurrentScope();} else_if_statement else_statement 
 	;
 
 else_statement: 
@@ -917,7 +925,15 @@ else_statement:
         |
         ;
 else_if_statement:
-        else_if_statement ELSEIF OPENBRACKET  value { checkIfLexemIsBool($4.type != BOOL_TYPE,yylineno);} CLOSEDBRACKET OPENCURL {createNewTable();} statements CLOSEDCURL {exitCurrentScope();} 
+        else_if_statement ELSEIF OPENBRACKET  value 
+        { 
+                checkIfLexemIsBool($4.type != BOOL_TYPE,yylineno);
+                char* temp = $4.stringRep;
+                SymbolTableEntry* entry = getIdEntry(temp);
+                if(entry == NULL || (entry != NULL && entry->kind !=PARAM && $4.boolVal == false))
+                        printSemanticWarning("Condition is always false",yylineno);
+                
+        } CLOSEDBRACKET OPENCURL {createNewTable();} statements CLOSEDCURL {exitCurrentScope();} 
         | 
         ;
 
@@ -980,7 +996,7 @@ enum_initialization:
         ENUM IDENTIFIER IDENTIFIER EQUAL IDENTIFIER SEMICOLON
         {
                 SymbolTableEntry* pointerToEnum = getIdEntry($2);
-                SymbolTableEntry* entry = getIdEntry($3);
+                SymbolTableEntry* entry = checkIfIdExistsInCurrentScope($3);
                 if(pointerToEnum == NULL){
                         printSemanticError("Enumerator not declared",yylineno);
                         return 0;
@@ -1009,7 +1025,7 @@ enum_initialization:
 enum_declaration: 	        
         ENUM IDENTIFIER OPENCURL
         {
-                SymbolTableEntry* entry = getIdEntry($2);
+                SymbolTableEntry* entry = checkIfIdExistsInCurrentScope($2);
                 if(entry != NULL){
                         printSemanticError("Variable already declared",yylineno);
                         return 0;
@@ -1073,7 +1089,7 @@ return_value:
 function_prototype:	
 
     type IDENTIFIER OPENBRACKET {
-                SymbolTableEntry* entry = getIdEntry($2);
+                SymbolTableEntry* entry = checkIfIdExistsInCurrentScope($2);
                 if(entry != NULL){
                         printSemanticError("Function already declared",yylineno);
                         return 0;
@@ -1088,7 +1104,7 @@ function_prototype:
         } parameters CLOSEDBRACKET
 
     | type IDENTIFIER OPENBRACKET {
-        SymbolTableEntry* entry = getIdEntry($2);
+        SymbolTableEntry* entry = checkIfIdExistsInCurrentScope($2);
         if(entry != NULL){
                 printSemanticError("Function already declared",yylineno);
                 return 0;
@@ -1102,7 +1118,7 @@ function_prototype:
         } CLOSEDBRACKET
 
     | VOID IDENTIFIER OPENBRACKET {
-        SymbolTableEntry* entry = getIdEntry($2);
+        SymbolTableEntry* entry = checkIfIdExistsInCurrentScope($2);
         if(entry != NULL){
                 printSemanticError("Function already declared",yylineno);
                 return 0;
@@ -1115,7 +1131,7 @@ function_prototype:
         } parameters CLOSEDBRACKET
 
     | VOID IDENTIFIER OPENBRACKET {
-        SymbolTableEntry* entry = getIdEntry($2);
+        SymbolTableEntry* entry = checkIfIdExistsInCurrentScope($2);
         if(entry != NULL){
                 printSemanticError("Function already declared",yylineno);
                 return 0;
@@ -1133,7 +1149,7 @@ parameters: 	parameters COMMA single_parameter | single_parameter ;
 single_parameter: 		
         type IDENTIFIER
         {
-                SymbolTableEntry* entry = getIdEntry($2);
+                SymbolTableEntry* entry = checkIfIdExistsInCurrentScope($2);
                 if(entry != NULL){
                         printSemanticError("Variable already declared",yylineno);
                         return 0;
@@ -1147,7 +1163,7 @@ single_parameter:
         } 
         | type IDENTIFIER EQUAL constant 
         {
-                SymbolTableEntry* entry = getIdEntry($2);
+                SymbolTableEntry* entry = checkIfIdExistsInCurrentScope($2);
                 if(entry != NULL){
                         printSemanticError("Variable already declared",yylineno);
                         return 0;
@@ -1254,7 +1270,8 @@ call_parameters:
 int main (void)
 {
     Init();
-    const char* fileName = "./Testcases/expressions(No error).txt";
+    /* const char* fileName = "./Testcases/expressions(No error).txt"; */
+    const char* fileName = "test.txt";
     yyin = fopen(fileName, "r+");
     if (yyin == NULL)
     {

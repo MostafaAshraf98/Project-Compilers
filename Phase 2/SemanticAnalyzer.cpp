@@ -12,8 +12,8 @@ using namespace std;
 
 SymbolTable *currentSymbolTable;
 SymbolTable *rootSymbolTable;
-SymbolTableEntry* currentFunction = NULL;
-SymbolTableEntry* currentEnum = NULL;
+SymbolTableEntry *currentFunction = NULL;
+SymbolTableEntry *currentEnum = NULL;
 stack<VariableType> functionParameters;
 
 FILE *semanticFile = fopen("semantic-error.txt", "w");
@@ -55,11 +55,11 @@ bool addEntryToTable(char *identifier, LexemeEntry *lexeme, Kind kind, bool isIn
     entry->pointerToEnum = pointerToEnum;
     entry->functionOutput = functionOutput;
     entry->functionInput = vector<VariableType>();
-    entry->enumValues = vector<char*>();
+    entry->enumValues = vector<char *>();
     string id(identifier);
-    if(kind == FUNC)
+    if (kind == FUNC)
         currentFunction = entry;
-    if(kind == ENUMERATOR)
+    if (kind == ENUMERATOR)
         currentEnum = entry;
 
     (currentSymbolTable->entries)[id] = entry;
@@ -125,9 +125,9 @@ bool isTypeMatching(int type1, int type2)
 void convertFunctionParamsToStack(SymbolTableEntry *currentFunc)
 {
     functionParameters = stack<VariableType>();
-    for(int i = currentFunc->functionInput.size() - 1; i >= 0; i--)
+    for (int i = currentFunc->functionInput.size() - 1; i >= 0; i--)
     {
-         functionParameters.push(currentFunc->functionInput[i]);
+        functionParameters.push(currentFunc->functionInput[i]);
     }
 }
 
@@ -146,13 +146,11 @@ void traverseSymbolTable(SymbolTable *table, int level, ofstream &outputFile)
                << std::setw(12) << "----"
                << std::setw(18) << "----" << std::endl;
 
-    // Print table entries
     for (const auto &entry : table->entries)
     {
         SymbolTableEntry *symbolEntry = entry.second;
         LexemeEntry *lexeme = symbolEntry->lexeme;
 
-        // Print entry values
         outputFile << std::setw(level * 4) << "" << entry.first
                    << std::setw(18) << level;
         switch (symbolEntry->kind)
@@ -203,11 +201,12 @@ void traverseSymbolTable(SymbolTable *table, int level, ofstream &outputFile)
             break;
         }
         outputFile << std::endl;
+        if (entry.second->isUsed == false)
+            fprintf(semanticFile, "Warning: %s is declared but not used\n", entry.first.c_str());
     }
 
     outputFile << std::endl;
 
-    // Recursively traverse child symbol tables
     for (SymbolTable *child : table->children)
     {
         traverseSymbolTable(child, level + 1, outputFile);
@@ -229,6 +228,26 @@ void printSemanticError(string error, int lineNo)
     printf("There are semantic errors\n");
     printSymbolTables();
     exit(0);
+}
+
+SymbolTableEntry* checkIfIdExistsInCurrentScope(char *identifier)
+{
+    string id(identifier);
+    unordered_map<string, SymbolTableEntry *> map = currentSymbolTable->entries;
+    auto entry = map.find(id);
+    if (entry == map.end())
+    {
+        return NULL;
+    }
+    else
+    {
+        return entry->second;
+    }
+}
+
+void printSemanticWarning(string warning,int lineNo)
+{
+    fprintf(semanticFile, "%s At Line Number %d\n", warning.c_str(), lineNo);
 }
 
 void printSyntaxError(string error, int lineNo)
