@@ -9,7 +9,6 @@ Testcases/
 lexer.c
 parser.c
 parser.h
-program.exe
 quadruple.txt
 semantic-error.txt
 syntax-error.txt
