@@ -41,6 +41,7 @@ class Compiler():
     #Formats
     normalFormat = QTextBlockFormat()
     errorFormat = QTextBlockFormat()
+    
 
 
     def highlightLine(self, lineNO):
@@ -147,6 +148,8 @@ class Compiler():
 
             if self.semErrorContent.find("Line Number") != -1 or self.syntaxErrorContent.find("Line Number") != -1:
                 lineNo = -1
+                if self.semErrorContent.find("always false") != -1 or self.semErrorContent.find("already declared") != -1:
+                    return
                 if self.semErrorContent.find("Line Number")!= -1:
                     startIndex = self.semErrorContent.find("Line Number")
                     startIndex += len("Line Number") + 1
