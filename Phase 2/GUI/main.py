@@ -95,13 +95,16 @@ class Compiler():
         
 
     def readFileBtn(self):
-        filename = QFileDialog.getOpenFileName(self.window, 'Open File', './', 'Text Files (*.txt)')
-        if filename[0]:
-            file = open(filename[0], 'r')
+        currentPath = os.getcwd()  # Get the current working directory
+
+        filename, _ = QFileDialog.getOpenFileName(self.window, 'Open File', currentPath, 'Text Files (*.txt)')
+        if filename:
+            relativePath = os.path.relpath(filename, currentPath)  # Get the relative path
+            file = open(filename, 'r')
             self.code = file.read()
             file.close()
-            self.codePath = filename[0]
-            self.codeFileName = os.path.basename(filename[0])
+            self.codePath = relativePath
+            self.codeFileName = os.path.basename(filename)
 
 
     def compileBtn(self):
