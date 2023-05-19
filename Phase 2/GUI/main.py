@@ -150,13 +150,15 @@ class Compiler():
                 if self.semErrorContent.find("Line Number")!= -1:
                     startIndex = self.semErrorContent.find("Line Number")
                     startIndex += len("Line Number") + 1
-                    lineNo = int(self.semErrorContent[startIndex:startIndex + 1])
+                    endIndex = self.semErrorContent.find("\n", startIndex)
+                    lineNo = int(self.semErrorContent[startIndex:endIndex])
                     
 
                 elif self.syntaxErrorContent.find("Line Number")!= -1:
                     startIndex = self.syntaxErrorContent.find("Line Number")
                     startIndex += len("Line Number") + 1
-                    lineNo = int(self.syntaxErrorContent[startIndex:startIndex + 1])
+                    endIndex = self.semErrorContent.find("\n", startIndex)
+                    lineNo = int(self.syntaxErrorContent[startIndex:endIndex])
                     
 
 
