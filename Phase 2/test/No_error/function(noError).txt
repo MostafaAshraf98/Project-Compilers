@@ -1,0 +1,11 @@
+int square(int x){
+    return x*x;
+}
+
+void main(){
+    int a=5;
+    int b=square(a);
+    if(b>10){
+        a=square(a);
+    }
+}

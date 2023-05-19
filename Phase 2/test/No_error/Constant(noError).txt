@@ -1,0 +1,4 @@
+void main(){
+    const int y=80;
+    int x=y+2;
+}

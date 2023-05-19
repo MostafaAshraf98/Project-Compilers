@@ -1,0 +1,9 @@
+int sum(int x, int y){
+    return x+y;
+}
+
+void main(){
+    int b=sum(10,3);
+    int a=sum(9);
+
+}

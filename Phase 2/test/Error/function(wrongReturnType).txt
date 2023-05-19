@@ -1,0 +1,4 @@
+int square(float x){
+
+    return x*x;
+}

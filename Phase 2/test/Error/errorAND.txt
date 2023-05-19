@@ -1,0 +1,11 @@
+void main(){
+
+	bool x=true;
+	int y=0;
+	if(x && y>0){
+		char a='';
+	}
+	if(x && y){
+		int b=0;
+	}
+}

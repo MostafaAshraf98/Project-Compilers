@@ -1,0 +1,10 @@
+int mul(int a, int b){
+    return a*b;
+}
+
+
+void main(){
+    int b=mul(5,6);
+    int a=sum(10,50);
+
+}

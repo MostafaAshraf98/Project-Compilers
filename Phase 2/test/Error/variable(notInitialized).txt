@@ -1,0 +1,9 @@
+int main(){
+    float z=9.0;
+    z+=2;
+    int y;
+    y--;
+
+
+return 0;
+}

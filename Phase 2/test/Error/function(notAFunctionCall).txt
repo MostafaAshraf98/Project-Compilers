@@ -1,0 +1,11 @@
+int mul(int a, int b){
+    return a*b;
+}
+
+void main(){
+
+    int x=mul(8,7);
+    int a=0;
+    int b=a(9,8);
+
+}

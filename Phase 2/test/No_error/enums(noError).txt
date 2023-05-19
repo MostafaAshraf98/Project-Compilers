@@ -1,0 +1,8 @@
+void main(){
+
+enum days{sunday,monday,tuesday,wednesday,thursday,friday};
+enum days today=sunday;
+enum days tomorrow =monday;
+
+
+}

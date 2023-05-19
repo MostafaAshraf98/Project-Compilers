@@ -1,0 +1,6 @@
+void main(){
+if(true){
+
+int x=0;
+char a='';
+}

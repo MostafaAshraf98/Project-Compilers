@@ -1,0 +1,5 @@
+bool temp = false;
+if(temp)
+{
+    int x = 5;
+}

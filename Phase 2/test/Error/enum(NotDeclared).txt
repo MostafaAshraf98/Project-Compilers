@@ -1,0 +1,9 @@
+void main(){
+
+    enum months{june, july, august};
+    enum months calender=june;
+    
+    enum days today =sunday;
+
+
+}
