@@ -1306,7 +1306,10 @@ call_parameters:
 int main (void)
 {
     Init();
-    const char* fileName = "./Testcases/enums (no error).txt";
+    char fileName[100];
+    printf("Enter the relative path of input file: ");
+    scanf("%s", fileName);
+        
     yyin = fopen(fileName, "r+");
     if (yyin == NULL)
     {
