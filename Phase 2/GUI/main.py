@@ -117,7 +117,7 @@ class Compiler():
 
 
             p = subprocess.Popen(["program.exe"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
-            command = f"{self.codeFileName}\n"
+            command = f"{self.codePath}\n"
             p.stdin.write(command.encode('utf-8'))
             p.stdin.flush()
             output = p.stdout.read()        
