@@ -271,7 +271,7 @@ SymbolTableEntry* checkIfIdExistsInCurrentScope(char *identifier)
 
 void printSemanticWarning(string warning,int lineNo)
 {
-    fprintf(semanticFile, "%s At Line Number %d\n", warning.c_str(), lineNo);
+    fprintf(semanticFile, "%s At Line No %d\n", warning.c_str(), lineNo);
 }
 
 void printSyntaxError(string error, int lineNo)
