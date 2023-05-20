@@ -932,7 +932,7 @@ if_statement:
                 SymbolTableEntry* entry = getIdEntry(temp);
                 if(entry != NULL && entry->kind !=PARAM && $3.boolVal == false)
                         printSemanticWarning("Warning: Condition is always false",yylineno);
-                if($3.boolVal == false)
+                else if(entry == NULL && $3.boolVal == false)
                         printSemanticWarning("Warning: Condition is always false",yylineno);
                 
         }  CLOSEDBRACKET OPENCURL {createNewTable();} statements CLOSEDCURL {exitCurrentScope();} else_if_statement else_statement 
