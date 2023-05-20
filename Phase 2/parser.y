@@ -328,6 +328,42 @@ boolean_expression:
                         addIntermidiateRep(temp);
                 }
         }
+        | expression AND NOT arithmetic_expression
+        {
+                int type1 = $1.type;
+                int type2 = $4.type;
+                if(type1 != BOOL_TYPE || type2 != BOOL_TYPE)
+                {
+                        printSemanticError("AND Operation should be between boolean types",yylineno);
+                }else{
+                        $$.type = BOOL_TYPE;
+                        $$.stringRep = getCurrentCount();
+                        $$.boolVal = $1.boolVal && !$4.boolVal;
+                        char* temp = concatStrings($$.stringRep,strdup(" := "));
+                        temp = concatStrings(temp,$1.stringRep);
+                        temp = concatStrings(temp,strdup(" AND NOT "));
+                        temp = concatStrings(temp,$4.stringRep);
+                        addIntermidiateRep(temp);
+                }
+        }
+        | expression OR NOT arithmetic_expression
+        {
+                int type1 = $1.type;
+                int type2 = $4.type;
+                if(type1 != BOOL_TYPE || type2 != BOOL_TYPE)
+                {
+                        printSemanticError("AND Operation should be between boolean types",yylineno);
+                }else{
+                        $$.type = BOOL_TYPE;
+                        $$.stringRep = getCurrentCount();
+                        $$.boolVal = $1.boolVal || !$4.boolVal;
+                        char* temp = concatStrings($$.stringRep,strdup(" := "));
+                        temp = concatStrings(temp,$1.stringRep);
+                        temp = concatStrings(temp,strdup(" OR NOT "));
+                        temp = concatStrings(temp,$4.stringRep);
+                        addIntermidiateRep(temp);
+                }
+        }
         | expression OR arithmetic_expression
         {
                 int type1 = $1.type;
