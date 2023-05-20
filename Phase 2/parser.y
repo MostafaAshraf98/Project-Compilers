@@ -377,7 +377,7 @@ boolean_expression:
                         $$.boolVal = $1.boolVal || $3.boolVal;
                         char* temp = concatStrings($$.stringRep,strdup(" := "));
                         temp = concatStrings(temp,$1.stringRep);
-                        temp = concatStrings(temp,strdup(" AND "));
+                        temp = concatStrings(temp,strdup(" OR "));
                         temp = concatStrings(temp,$3.stringRep);
                         addIntermidiateRep(temp);
                 }
