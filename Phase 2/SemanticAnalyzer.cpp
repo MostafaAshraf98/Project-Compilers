@@ -226,6 +226,8 @@ void traverseSymbolTable(SymbolTable *table, int level, ofstream &outputFile)
             break;
         case ENUM_TYPE:
             outputFile << std::setw(16) << "ENUM_TYPE";
+            if (symbolEntry->kind == VAR || symbolEntry->kind == CONSTANT)
+                outputFile << std::setw(15) << lexeme->stringVal;
             break;
         }
         outputFile << std::endl;
