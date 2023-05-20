@@ -597,6 +597,9 @@ factor:
         | IDENTIFIER
         {
                 SymbolTableEntry* entry = getIdEntry($1);
+                if(idExistsInAnEnum(rootSymbolTable,$1))
+                        return 0;
+                        
                 if(entry == NULL){
                         printSemanticError("Variable not declared",yylineno);
                         return 0;
@@ -627,16 +630,6 @@ assignment_statement:
         IDENTIFIER EQUAL expression SEMICOLON
         {
                 SymbolTableEntry* entry = getIdEntry($1);
-                if(entry == NULL)
-                {
-                        printSemanticError("Undeclared Variable",yylineno);
-                        return 0;
-                }
-                if(entry->kind != VAR)
-                {
-                        printSemanticError("Cannot assign value to a non variable type",yylineno);
-                        return 0;
-                }
                 if(entry->lexeme->type == ENUM_TYPE)
                 {
                         SymbolTableEntry* pointerToEnum = entry->pointerToEnum;
@@ -663,6 +656,16 @@ assignment_statement:
                                 printSemanticError("Enumerator does not contain this value",yylineno);
                         }
 
+                        return 0;
+                }
+                if(entry == NULL)
+                {
+                        printSemanticError("Undeclared Variable",yylineno);
+                        return 0;
+                }
+                if(entry->kind != VAR)
+                {
+                        printSemanticError("Cannot assign value to a non variable type",yylineno);
                         return 0;
                 }
                 int type1 = (int) entry->lexeme->type;
