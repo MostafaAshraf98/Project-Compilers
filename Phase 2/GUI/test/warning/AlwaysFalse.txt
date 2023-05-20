@@ -1,0 +1,8 @@
+void main()
+{
+	int x=0;
+	float y=0.9;
+	if(x==y){
+		x++;
+	}
+}

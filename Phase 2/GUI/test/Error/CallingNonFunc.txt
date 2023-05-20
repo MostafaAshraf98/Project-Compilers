@@ -1,0 +1,14 @@
+int mul(int a, int b){
+    return a*b;
+}
+int a(int b, int c){
+    return b+c;
+}
+
+void main(){
+
+    int x=mul(8,7);
+    int a=0;
+    int b=a(9,8);
+
+}

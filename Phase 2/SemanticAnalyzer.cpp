@@ -198,23 +198,28 @@ void traverseSymbolTable(SymbolTable *table, int level, ofstream &outputFile)
         {
         case INT_TYPE:
             outputFile << std::setw(16) << "INT_TYPE";
-            outputFile << std::setw(15) << lexeme->intVal;
+            if (symbolEntry->kind == VAR || symbolEntry->kind == CONSTANT)
+                outputFile << std::setw(15) << lexeme->intVal;
             break;
         case FLOAT_TYPE:
             outputFile << std::setw(16) << "FLOAT_TYPE";
-            outputFile << std::setw(15) << lexeme->floatVal;
+            if (symbolEntry->kind == VAR || symbolEntry->kind == CONSTANT)
+                outputFile << std::setw(15) << lexeme->floatVal;
             break;
         case STRING_TYPE:
             outputFile << std::setw(16) << "STRING_TYPE";
-            outputFile << std::setw(15) << lexeme->stringVal;
+            if (symbolEntry->kind == VAR || symbolEntry->kind == CONSTANT)
+                outputFile << std::setw(15) << lexeme->stringVal;
             break;
         case BOOL_TYPE:
             outputFile << std::setw(16) << "BOOL_TYPE";
-            outputFile << std::setw(15) << lexeme->boolVal;
+            if (symbolEntry->kind == VAR || symbolEntry->kind == CONSTANT)
+                outputFile << std::setw(15) << lexeme->boolVal;
             break;
         case CHAR_TYPE:
             outputFile << std::setw(16) << "CHAR_TYPE";
-            outputFile << std::setw(15) << lexeme->charVal;
+            if (symbolEntry->kind == VAR || symbolEntry->kind == CONSTANT)
+                outputFile << std::setw(15) << lexeme->charVal;
             break;
         case VOID_TYPE:
             outputFile << std::setw(16) << "VOID_TYPE";
