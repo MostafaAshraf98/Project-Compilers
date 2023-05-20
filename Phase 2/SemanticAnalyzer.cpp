@@ -36,7 +36,7 @@ void Init()
 void createNewTable()
 {
     SymbolTable *newSymbolTable = new SymbolTable();
-    
+
     unordered_map<string, SymbolTableEntry *> map;
     vector<SymbolTable *> children;
     newSymbolTable->children = children;
@@ -132,19 +132,19 @@ void convertFunctionParamsToStack(SymbolTableEntry *currentFunc)
     }
 }
 
-bool idExistsInAnEnum(SymbolTable* table, char* id)
+bool idExistsInAnEnum(SymbolTable *table, char *id)
 {
-    for(auto entry : table->entries)
+    for (auto entry : table->entries)
     {
-        if(entry.second->kind == ENUMERATOR)
+        if (entry.second->kind == ENUMERATOR)
         {
-            if(idExistsInEnum(entry.second, id))
+            if (idExistsInEnum(entry.second, id))
             {
                 return true;
             }
         }
     }
-    for(auto child : table->children)
+    for (auto child : table->children)
     {
         if (idExistsInAnEnum(child, id))
         {
@@ -152,7 +152,6 @@ bool idExistsInAnEnum(SymbolTable* table, char* id)
         }
     }
     return false;
-    
 }
 
 void traverseSymbolTable(SymbolTable *table, int level, ofstream &outputFile)
@@ -254,7 +253,7 @@ void printSemanticError(string error, int lineNo)
     exit(0);
 }
 
-SymbolTableEntry* checkIfIdExistsInCurrentScope(char *identifier)
+SymbolTableEntry *checkIfIdExistsInCurrentScope(char *identifier)
 {
     string id(identifier);
     unordered_map<string, SymbolTableEntry *> map = currentSymbolTable->entries;
@@ -269,7 +268,7 @@ SymbolTableEntry* checkIfIdExistsInCurrentScope(char *identifier)
     }
 }
 
-void printSemanticWarning(string warning,int lineNo)
+void printSemanticWarning(string warning, int lineNo)
 {
     fprintf(semanticFile, "%s At Line No %d\n", warning.c_str(), lineNo);
 }
@@ -328,170 +327,164 @@ void checkIfLexemIsBool(bool isBool, int lineNo)
 
 bool checkEQ_EQ(LexemeEntry *lex1, LexemeEntry *lex2)
 {
-    if (lex1->type == INT_TYPE)
-    {
+    if (lex1->type == INT_TYPE && lex2->type == FLOAT_TYPE)
+        return lex1->intVal == lex2->floatVal;
+
+    else if (lex1->type == FLOAT_TYPE && lex2->type == INT_TYPE)
+        return lex1->floatVal == lex2->intVal;
+
+    else if (lex1->type == INT_TYPE)
         return lex1->intVal == lex2->intVal;
-    }
+
     else if (lex1->type == FLOAT_TYPE)
-    {
         return lex1->floatVal == lex2->floatVal;
-    }
+
     else if (lex1->type == BOOL_TYPE)
-    {
         return lex1->boolVal == lex2->boolVal;
-    }
+
     else if (lex1->type == CHAR_TYPE)
-    {
         return lex1->charVal == lex2->charVal;
-    }
+
     else if (lex1->type == STRING_TYPE)
-    {
         return strcmp(lex1->stringVal, lex2->stringVal) == 0;
-    }
+
     else
-    {
         return false;
-    }
 }
 
 bool checkNE(LexemeEntry *lex1, LexemeEntry *lex2)
 {
-    if (lex1->type == INT_TYPE)
-    {
+    if (lex1->type == INT_TYPE && lex2->type == FLOAT_TYPE)
+        return lex1->intVal != lex2->floatVal;
+
+    else if (lex1->type == FLOAT_TYPE && lex2->type == INT_TYPE)
+        return lex1->floatVal != lex2->intVal;
+
+    else if (lex1->type == INT_TYPE)
         return lex1->intVal != lex2->intVal;
-    }
+
     else if (lex1->type == FLOAT_TYPE)
-    {
         return lex1->floatVal != lex2->floatVal;
-    }
+
     else if (lex1->type == BOOL_TYPE)
-    {
         return lex1->boolVal != lex2->boolVal;
-    }
+
     else if (lex1->type == CHAR_TYPE)
-    {
         return lex1->charVal != lex2->charVal;
-    }
+
     else if (lex1->type == STRING_TYPE)
-    {
         return strcmp(lex1->stringVal, lex2->stringVal) != 0;
-    }
+
     else
-    {
         return false;
-    }
 }
 
 bool checkGE(LexemeEntry *lex1, LexemeEntry *lex2)
 {
-    if (lex1->type == INT_TYPE)
-    {
+    if (lex1->type == INT_TYPE && lex2->type == FLOAT_TYPE)
+        return lex1->intVal >= lex2->floatVal;
+
+    else if (lex1->type == FLOAT_TYPE && lex2->type == INT_TYPE)
+        return lex1->floatVal >= lex2->intVal;
+
+    else if (lex1->type == INT_TYPE)
         return lex1->intVal >= lex2->intVal;
-    }
+
     else if (lex1->type == FLOAT_TYPE)
-    {
         return lex1->floatVal >= lex2->floatVal;
-    }
+
     else if (lex1->type == BOOL_TYPE)
-    {
         return lex1->boolVal >= lex2->boolVal;
-    }
+
     else if (lex1->type == CHAR_TYPE)
-    {
         return lex1->charVal >= lex2->charVal;
-    }
+
     else if (lex1->type == STRING_TYPE)
-    {
         return strcmp(lex1->stringVal, lex2->stringVal) >= 0;
-    }
+
     else
-    {
         return false;
-    }
 }
 
 bool checkLE(LexemeEntry *lex1, LexemeEntry *lex2)
 {
-    if (lex1->type == INT_TYPE)
-    {
+    if (lex1->type == INT_TYPE && lex2->type == FLOAT_TYPE)
+        return lex1->intVal <= lex2->floatVal;
+
+    else if (lex1->type == FLOAT_TYPE && lex2->type == INT_TYPE)
+        return lex1->floatVal <= lex2->intVal;
+
+    else if (lex1->type == INT_TYPE)
         return lex1->intVal <= lex2->intVal;
-    }
+
     else if (lex1->type == FLOAT_TYPE)
-    {
         return lex1->floatVal <= lex2->floatVal;
-    }
+
     else if (lex1->type == BOOL_TYPE)
-    {
         return lex1->boolVal <= lex2->boolVal;
-    }
+
     else if (lex1->type == CHAR_TYPE)
-    {
         return lex1->charVal <= lex2->charVal;
-    }
+
     else if (lex1->type == STRING_TYPE)
-    {
         return strcmp(lex1->stringVal, lex2->stringVal) <= 0;
-    }
+
     else
-    {
         return false;
-    }
 }
 
 bool checkGT(LexemeEntry *lex1, LexemeEntry *lex2)
 {
-    if (lex1->type == INT_TYPE)
-    {
+    if (lex1->type == INT_TYPE && lex2->type == FLOAT_TYPE)
+        return lex1->intVal > lex2->floatVal;
+
+    else if (lex1->type == FLOAT_TYPE && lex2->type == INT_TYPE)
+        return lex1->floatVal > lex2->intVal;
+
+    else if (lex1->type == INT_TYPE)
         return lex1->intVal > lex2->intVal;
-    }
+
     else if (lex1->type == FLOAT_TYPE)
-    {
         return lex1->floatVal > lex2->floatVal;
-    }
+
     else if (lex1->type == BOOL_TYPE)
-    {
         return lex1->boolVal > lex2->boolVal;
-    }
+
     else if (lex1->type == CHAR_TYPE)
-    {
         return lex1->charVal > lex2->charVal;
-    }
+
     else if (lex1->type == STRING_TYPE)
-    {
         return strcmp(lex1->stringVal, lex2->stringVal) > 0;
-    }
+
     else
-    {
         return false;
-    }
 }
 
 bool checkLT(LexemeEntry *lex1, LexemeEntry *lex2)
 {
-    if (lex1->type == INT_TYPE)
-    {
+    if (lex1->type == INT_TYPE && lex2->type == FLOAT_TYPE)
+        return lex1->intVal < lex2->floatVal;
+
+    else if (lex1->type == FLOAT_TYPE && lex2->type == INT_TYPE)
+        return lex1->floatVal < lex2->intVal;
+
+    else if (lex1->type == INT_TYPE)
         return lex1->intVal < lex2->intVal;
-    }
+
     else if (lex1->type == FLOAT_TYPE)
-    {
         return lex1->floatVal < lex2->floatVal;
-    }
+
     else if (lex1->type == BOOL_TYPE)
-    {
         return lex1->boolVal < lex2->boolVal;
-    }
+
     else if (lex1->type == CHAR_TYPE)
-    {
         return lex1->charVal < lex2->charVal;
-    }
+
     else if (lex1->type == STRING_TYPE)
-    {
         return strcmp(lex1->stringVal, lex2->stringVal) < 0;
-    }
+
     else
-    {
         return false;
-    }
 }
 
 #endif
